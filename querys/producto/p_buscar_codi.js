@@ -1,9 +1,7 @@
 require('dotenv').config();
 const {config,Connection,Request,TYPES} = require('../../conexion/cadena')
 
-// let observador = (req,res,next) => objevacio(req.signedCookies) ? res.status(401).send("logeate") : next();
-
-let bprd_ruc = (req,res,next) => {
+let bprd_codi = (req,res,next) => {
     //////////LA LONGUITUD DE LA CADENA SOLO PUEDE SER DE 11
     // let valid_coki = req.signedCookies;
     // let {c_ruc} = req.body;
@@ -11,7 +9,6 @@ let bprd_ruc = (req,res,next) => {
     // console.log(req.body)
     console.log(req.params)
     console.log(req.params.id)
-    console.log(typeof req.params.id)
 
     console.log(req.query)
     /////validar el tipo de ruc con otra funcion
@@ -37,8 +34,9 @@ let bd_conexion=(res,ruc)=>{
 let bd_c_query = (res,ruc)=>{
     // let caracter="%"+sugerencia+"%";
     // let sp_sql="select top 4 codcli,nomcli from mst01cli where estado=1 and nomcli like @pista";
-    // let sp_sql="select * from mst01cli where ruccli=@c_ruc";
-    let sp_sql="select ruccli,nomcli,codcdv,tipocl,codcat,Usr_001 from mst01cli where ruccli=@c_ruc";
+    // let sp_sql="select ruccli,nomcli,codcdv,tipocl,codcat,Usr_001 from mst01cli where ruccli=@c_ruc";
+    // let sp_sql="select codi,codf,descr,marc,stoc,vvus,Usr_001,codmar,Usr_016 from prd0101 where codi=@prdid";
+    let sp_sql="select codi,codf,descr,marc,(CAST(stoc as int)-(CAST(svta as int)+CAST(pedi as int))),vvus,Usr_001,codmar,Usr_016 from prd0101 where codi=@prdid";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){
             /////validar la respuesta en de error de servidor
@@ -72,9 +70,9 @@ let bd_c_query = (res,ruc)=>{
             }
         }
     })
-    consulta.addParameter('c_ruc',TYPES.VarChar,ruc);
+    consulta.addParameter('prdid',TYPES.VarChar,ruc);
     conexion.execSql(consulta);
     // conexion.callProcedure(consulta);
 }
 
-module.exports={bprd_ruc}
+module.exports={bprd_codi}

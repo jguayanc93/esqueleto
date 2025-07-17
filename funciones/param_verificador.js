@@ -3,6 +3,14 @@ let permitidos=["01","02","04","05","06","09","10","11","12"];
 
 let querypermitidos=["fam","sbfam","stoc"];
 
+let param_productos_permitidos=["id"];
+
+let qs_productos_permitidos=["tipo","dsct"];
+
+let hp_productos_permitidos=["08","11"];
+
+let conjunto_permitidos=[param_productos_permitidos,qs_productos_permitidos,hp_productos_permitidos];
+
 const parametro_validador = (req,parametros,param) => {
     if(parametros.includes(param)){
         if(req.params[param].length!==2){
@@ -109,4 +117,36 @@ const query_validador = (queryobj,parametros) => {
     }
 }
 
-module.exports={parametro_validador,qs_validador,parametros_todos_validador,query_validador}
+const objeto_verificador_mejorado = (obj,parametros,longuitud,idverificable) => {
+    // let asiganador=[];///se usaria en caso fueran multiples parametros para revisar
+    if(Object.keys(obj).length===longuitud){
+        if(parametros.includes(idverificable)){
+            return "valido";
+        }
+        else{
+            return "invalido";
+        }
+    }
+    else{
+        return "invalido";
+    }
+}
+
+const objeto_verificador_mejorado_permitidos = (obj,indice_busuqeda) => {
+    let obligatorios=[];
+    for(let param of Object.keys(obj)){
+        if(conjunto_permitidos[indice_busuqeda].includes(param)){
+            obligatorios.push(param)
+        }
+    }
+
+    if(conjunto_permitidos[indice_busuqeda].length===obligatorios.length){
+        return true;
+    }
+    else{
+        return false;
+    }
+    
+}
+
+module.exports={parametro_validador,qs_validador,parametros_todos_validador,query_validador,objeto_verificador_mejorado,objeto_verificador_mejorado_permitidos}

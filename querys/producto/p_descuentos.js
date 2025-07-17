@@ -1,38 +1,40 @@
 require('dotenv').config();
 const {config,Connection,Request,TYPES} = require('../../conexion/cadena')
-const {objevacio,objepropiedades} = require('../../funciones/objvacio')
-const {parametros_todos_validador,query_validador} = require('../../funciones/param_verificador')
+const {objepropiedades,multobjevacios} = require('../../funciones/objvacio')
+const {query_validador,objeto_verificador_mejorado,objeto_verificador_mejorado_permitidos} = require('../../funciones/param_verificador')
 
-let bprd_list = (req,res,next) => {
+let bprd_dscto = (req,res,next) => {
+    //////extraer primero los parametros que sean correctos
+    //////luego los querys que sean correctos
+    console.log("param",req.params);
     console.log("query",req.query);
-    
-    /////////NUEVO METODO FUNCIONAL
-    if(!objevacio(req.query)){
-        let parametros=objepropiedades(req.query);////VALIDO HASTA AQUI
-        let validados=parametros_todos_validador(req.query,parametros);
-        /////////solo debolver los correctos y constatados
-        if(validados==="validos"){
-
-            let verificacion=query_validador(req.query,parametros)
-
-            if(Array.isArray(verificacion)){
-                bd_conexion(res,...verificacion);
+    ////validamos que no este vacio los 2 objetos
+    if(multobjevacios(req.params,req.query)){
+        // let param=objepropiedades(req.params);
+        // let qs=objepropiedades(req.params);
+        //////////primero validamos que los parametros pedidos sean los correctos
+        if(objeto_verificador_mejorado_permitidos(req.params,0)){
+            if(objeto_verificador_mejorado_permitidos(req.query,1)){
+                bd_conexion(res,req.params.id,req.query.tipo,req.query.dsct);
             }
             else{
-                res.status(400).send("parametros invalido");
+                res.status(400).send("parametro invalido");
             }
+            // /////mal armado en esta parte
+            // falta aun validar el contenido aun cuando los parametros sean correctos
         }
         else{
             res.status(400).send("parametros invalido");
         }
     }
-    /////////////revisar el listado completo aunqe no deberia arrojar nada
     else{
         res.status(400).send("parametros invalido");
     }
 }
 
-let bd_conexion=(res,fam,sbfid,stoc)=>{
+
+
+let bd_conexion=(res,id,tipo,dsct)=>{
     conexion = new Connection(config);
     conexion.connect();
     conexion.on('connect',(err)=>{
@@ -40,21 +42,17 @@ let bd_conexion=(res,fam,sbfid,stoc)=>{
             console.log("ERROR: ",err);
         }
         else{
-            bd_c_query(res,fam,sbfid,stoc);
+            bd_c_query(res,id,tipo,dsct);
         }
     });
 }
 
-let bd_c_query = (res,fam,sbfid,stoc)=>{
-    console.log("este es el stock",stoc);
-    console.log(stoc===true);
-    let grupo=fam+sbfid;
-    let sp_sql="select codi,codf,descr,marc,(CAST(stoc as int)-(CAST(svta as int)+CAST(pedi as int)))as'stoc',Usr_001,codmar,Usr_016 from prd0101 where estado=1 AND LEFT(codi,4)=@listgrp";
-    if(stoc){
-        sp_sql+=" AND (CAST(stoc as int)-(CAST(svta as int)+CAST(pedi as int)))>@stok";
-    }
-    else{ sp_sql+=" AND (CAST(stoc as int)-(CAST(svta as int)+CAST(pedi as int)))<=@stok"; }
+let bd_c_query = (res,id,tipo,dsct)=>{
     
+    let sp_sql="select a.codi,b.dscto_default from prd0101 a inner join dtl_dscto_marca_tc b on (b.codmar=a.codmar) where a.codi=@ide AND b.codtcl=@letra";
+    if(dsct==="max") sp_sql="select a.codi,b.dscto_maxven from prd0101 a inner join dtl_dscto_marca_tc b on (b.codmar=a.codmar) where a.codi=@ide AND b.codtcl=@letra";
+    
+        
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){
             /////validar la respuesta en de error de servidor
@@ -85,9 +83,9 @@ let bd_c_query = (res,fam,sbfid,stoc)=>{
             }
         }
     })
-    consulta.addParameter('listgrp',TYPES.VarChar,grupo);
-    consulta.addParameter('stok',TYPES.Int,stoc);
+    consulta.addParameter('ide',TYPES.VarChar,id);
+    consulta.addParameter('letra',TYPES.VarChar,tipo);
     conexion.execSql(consulta);
 }
 
-module.exports={bprd_list}
+module.exports={bprd_dscto}

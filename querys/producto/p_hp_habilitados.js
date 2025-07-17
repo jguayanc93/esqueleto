@@ -1,38 +1,38 @@
 require('dotenv').config();
 const {config,Connection,Request,TYPES} = require('../../conexion/cadena')
 const {objevacio,objepropiedades} = require('../../funciones/objvacio')
-const {parametros_todos_validador,query_validador} = require('../../funciones/param_verificador')
+const {query_validador,objeto_verificador_mejorado,objeto_verificador_mejorado_permitidos} = require('../../funciones/param_verificador')
 
-let bprd_list = (req,res,next) => {
+let bprd_hp = (req,res,next) => {
+    console.log("param",req.params);
     console.log("query",req.query);
     
     /////////NUEVO METODO FUNCIONAL
-    if(!objevacio(req.query)){
-        let parametros=objepropiedades(req.query);////VALIDO HASTA AQUI
-        let validados=parametros_todos_validador(req.query,parametros);
-        /////////solo debolver los correctos y constatados
-        if(validados==="validos"){
+    if(!objevacio(req.params)){
 
-            let verificacion=query_validador(req.query,parametros)
-
-            if(Array.isArray(verificacion)){
-                bd_conexion(res,...verificacion);
-            }
+        if(!objevacio(req.query)){
+            if(objeto_verificador_mejorado_permitidos(req.params,0)){}
             else{
-                res.status(400).send("parametros invalido");
+                res.status(400).send("parametro invalido");
             }
         }
         else{
-            res.status(400).send("parametros invalido");
+            if(objeto_verificador_mejorado_permitidos(req.params,0)){
+                bd_conexion(res,req.params.id);
+            }
+            else{
+                res.status(400).send("parametro invalido");
+            }
         }
     }
-    /////////////revisar el listado completo aunqe no deberia arrojar nada
     else{
         res.status(400).send("parametros invalido");
     }
 }
 
-let bd_conexion=(res,fam,sbfid,stoc)=>{
+
+
+let bd_conexion=(res,id)=>{
     conexion = new Connection(config);
     conexion.connect();
     conexion.on('connect',(err)=>{
@@ -40,21 +40,14 @@ let bd_conexion=(res,fam,sbfid,stoc)=>{
             console.log("ERROR: ",err);
         }
         else{
-            bd_c_query(res,fam,sbfid,stoc);
+            bd_c_query(res,id);
         }
     });
 }
 
-let bd_c_query = (res,fam,sbfid,stoc)=>{
-    console.log("este es el stock",stoc);
-    console.log(stoc===true);
-    let grupo=fam+sbfid;
-    let sp_sql="select codi,codf,descr,marc,(CAST(stoc as int)-(CAST(svta as int)+CAST(pedi as int)))as'stoc',Usr_001,codmar,Usr_016 from prd0101 where estado=1 AND LEFT(codi,4)=@listgrp";
-    if(stoc){
-        sp_sql+=" AND (CAST(stoc as int)-(CAST(svta as int)+CAST(pedi as int)))>@stok";
-    }
-    else{ sp_sql+=" AND (CAST(stoc as int)-(CAST(svta as int)+CAST(pedi as int)))<=@stok"; }
-    
+let bd_c_query = (res,id)=>{
+    let sp_sql="select codi,descr,marc,(CAST(stoc as int)-(CAST(svta as int)+CAST(pedi as int))),vvus,Usr_001,codmar,Usr_016 from prd0101 where codi=@ide";
+        
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){
             /////validar la respuesta en de error de servidor
@@ -85,9 +78,8 @@ let bd_c_query = (res,fam,sbfid,stoc)=>{
             }
         }
     })
-    consulta.addParameter('listgrp',TYPES.VarChar,grupo);
-    consulta.addParameter('stok',TYPES.Int,stoc);
+    consulta.addParameter('ide',TYPES.VarChar,id);
     conexion.execSql(consulta);
 }
 
-module.exports={bprd_list}
+module.exports={bprd_hp}

@@ -12,5 +12,17 @@ const objepropiedades=(objecuerpo)=>{
     }
     return propiedades;
 }
+//////////EN PRUEVA PARA SACAR MULTIPLES OBJETOS
+const multobjevacios=(objparam,objqs)=>{
+    let rellenos=true;
 
-module.exports={objevacio,objepropiedades}
+    let obligatorios=objevacio(objparam);
+    let filtros=objevacio(objqs);
+
+    if(obligatorios) rellenos=false;
+    if(filtros) rellenos=false;
+
+    return rellenos;
+}
+
+module.exports={objevacio,objepropiedades,multobjevacios}

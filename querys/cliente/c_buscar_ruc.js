@@ -1,4 +1,5 @@
 require('dotenv').config();
+
 const {config,Connection,Request,TYPES} = require('../../conexion/cadena')
 
 // let observador = (req,res,next) => objevacio(req.signedCookies) ? res.status(401).send("logeate") : next();

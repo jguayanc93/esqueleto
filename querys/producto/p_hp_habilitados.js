@@ -1,38 +1,21 @@
 require('dotenv').config();
 const {config,Connection,Request,TYPES} = require('../../conexion/cadena')
-const {objevacio,objepropiedades} = require('../../funciones/objvacio')
-const {query_validador,objeto_verificador_mejorado,objeto_verificador_mejorado_permitidos} = require('../../funciones/param_verificador')
+
+const {objeto_verificador_mejorado,objeto_verificador_mejorado_permitidos} = require('../../funciones/param_verificador')
 
 let bprd_hp = (req,res,next) => {
-    console.log("param",req.params);
-    console.log("query",req.query);
+    // console.log("param",req.params);
+    // console.log("query",req.query);
     
-    /////////NUEVO METODO FUNCIONAL
-    if(!objevacio(req.params)){
+    let codi=req.params.id;
+    let cliente=req.query.cliente;
 
-        if(!objevacio(req.query)){
-            if(objeto_verificador_mejorado_permitidos(req.params,0)){}
-            else{
-                res.status(400).send("parametro invalido");
-            }
-        }
-        else{
-            if(objeto_verificador_mejorado_permitidos(req.params,0)){
-                bd_conexion(res,req.params.id);
-            }
-            else{
-                res.status(400).send("parametro invalido");
-            }
-        }
-    }
-    else{
-        res.status(400).send("parametros invalido");
-    }
+    bd_conexion(res,codi,cliente);
 }
 
 
 
-let bd_conexion=(res,id)=>{
+let bd_conexion=(res,codi,cliente)=>{
     conexion = new Connection(config);
     conexion.connect();
     conexion.on('connect',(err)=>{
@@ -40,13 +23,14 @@ let bd_conexion=(res,id)=>{
             console.log("ERROR: ",err);
         }
         else{
-            bd_c_query(res,id);
+            bd_c_query(res,codi,cliente);
         }
     });
 }
 
-let bd_c_query = (res,id)=>{
-    let sp_sql="select codi,descr,marc,(CAST(stoc as int)-(CAST(svta as int)+CAST(pedi as int))),vvus,Usr_001,codmar,Usr_016 from prd0101 where codi=@ide";
+let bd_c_query = (res,codi,cliente)=>{
+    // let sp_sql="select codcli,ruccli,nomcli,ISNULL((CASE WHEN codcat='08' THEN 'SUMINISTROS HABILITADO' WHEN codcat<>'08' THEN 'NO HABILITADO' END),'NO HABILITADO'),ISNULL((CASE Usr_001 WHEN '1' THEN 'PLOTTER HABILITADO' END),'NO HABILITADO') from mst01cli where codcli=@cli";
+    let sp_sql="select codcli,ruccli,nomcli,ISNULL((select (CASE WHEN tipo='01' THEN 'PLOTTER' WHEN tipo='08' THEN 'SUMINISTRO' END) from ListaHp3 where codi=@ide),'NO'),ISNULL((CASE WHEN codcat='08' THEN 'SUMINISTROS HABILITADO' WHEN codcat<>'08' THEN 'NO HABILITADO' END),'NO HABILITADO'),ISNULL((CASE Usr_001 WHEN '1' THEN 'PLOTTER HABILITADO' END),'NO HABILITADO') from mst01cli where codcli=@cli";
         
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){
@@ -78,7 +62,8 @@ let bd_c_query = (res,id)=>{
             }
         }
     })
-    consulta.addParameter('ide',TYPES.VarChar,id);
+    consulta.addParameter('ide',TYPES.VarChar,codi);
+    consulta.addParameter('cli',TYPES.VarChar,cliente);
     conexion.execSql(consulta);
 }
 

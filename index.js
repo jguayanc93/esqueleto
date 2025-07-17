@@ -55,16 +55,14 @@ const revisionPeticion=[metodohttpPermitido,peticionUrl];
 
 app.use(process.env.BASE_URI+'/producto',ruta.producto)
 
-app.use(process.env.BASE_URI+'/cliente',revisionPeticion,ruta.cliente)
+app.use(process.env.BASE_URI+'/cliente',ruta.cliente)
+
+app.use(process.env.BASE_URI+'/tcambio',ruta.producto)
 
 // app.use(process.env.BASE_URI+'/marca',)////dentro de producto
 
 // app.use(process.env.BASE_URI+'/dsct',)////dentro de producto
 
 // app.use(process.env.BASE_URI+'/tcm',)////dentro de producto
-
-// app.use(process.env.BASE_URI+'/stoc',)////dentro de producto
-
-// app.use(process.env.BASE_URI+'/hp',)////dentro de producto
 
 app.listen(port,()=>console.log("servicio levantado"))

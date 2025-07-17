@@ -1,4 +1,3 @@
-
 let permitidos=["01","02","04","05","06","09","10","11","12"];
 
 let querypermitidos=["fam","sbfam","stoc"];
@@ -22,12 +21,6 @@ const parametro_validador = (req,parametros,param) => {
                 return "invalido";
             }
             else{
-                ///////////aqui hay un bug de busqueda porque solo funciona con la familia no con el resto
-                // if(permitidos.includes(req.params[param])){
-                //     return "next";
-                // }
-                // else{ return "invalido"; }
-                ///////////////////////////////////////
                 //ESTO SERIA PARA SUBSANAR ESE BUG
                 if(param==="catID"){
                     if(permitidos.includes(req.params[param])){

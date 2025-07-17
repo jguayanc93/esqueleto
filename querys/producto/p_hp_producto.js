@@ -1,15 +1,15 @@
 require('dotenv').config();
 const {config,Connection,Request,TYPES} = require('../../conexion/cadena')
 
-// let observador = (req,res,next) => objevacio(req.signedCookies) ? res.status(401).send("logeate") : next();
+const {objeto_verificador_mejorado,objeto_verificador_mejorado_permitidos} = require('../../funciones/param_verificador')
 
-let bcli_ruc = (req,res,next) => {
-    //////////LA LONGUITUD DE LA CADENA SOLO PUEDE SER DE 11
-    // let valid_coki = req.signedCookies;
+let bprd_hp_cliente = (req,res,next) => {
+    
     let codi=req.params.id;
-    /////validar el tipo de ruc con otra funcion
     bd_conexion(res,codi);
 }
+
+
 
 let bd_conexion=(res,codi)=>{
     conexion = new Connection(config);
@@ -25,10 +25,8 @@ let bd_conexion=(res,codi)=>{
 }
 
 let bd_c_query = (res,codi)=>{
-    // let caracter="%"+sugerencia+"%";
-    // let sp_sql="select top 4 codcli,nomcli from mst01cli where estado=1 and nomcli like @pista";
-    // let sp_sql="select ruccli,nomcli,codcdv,tipocl,codcat,Usr_001 from mst01cli where ruccli=@c_ruc";
-    let sp_sql="select codcli,ruccli,nomcli,codcdv,tipocl from mst01cli where estado=1 AND codcli=@codcli";
+    let sp_sql="select codi,(CASE tipo when '08' then 'suministros' when '01' then 'plotter' end)as'tipo' from listaHp3 where codi=@ide";
+        
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){
             /////validar la respuesta en de error de servidor
@@ -39,7 +37,7 @@ let bd_c_query = (res,codi)=>{
             conexion.close();
             if(rows.length==0){
                 /////validar la respuesta en caso de no encontrar nada
-                res.status(400).send("no registrado");
+                res.status(200).send("producto libre");
             }
             else{
                 let respuesta=[];
@@ -59,9 +57,8 @@ let bd_c_query = (res,codi)=>{
             }
         }
     })
-    consulta.addParameter('codcli',TYPES.VarChar,codi);
+    consulta.addParameter('ide',TYPES.VarChar,codi);
     conexion.execSql(consulta);
-    // conexion.callProcedure(consulta);
 }
 
-module.exports={bcli_ruc}
+module.exports={bprd_hp_cliente}

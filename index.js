@@ -57,7 +57,9 @@ app.use(process.env.BASE_URI+'/producto',ruta.producto)
 
 app.use(process.env.BASE_URI+'/cliente',ruta.cliente)
 
-app.use(process.env.BASE_URI+'/tcambio',ruta.producto)
+app.use(process.env.BASE_URI+'/tcambio',ruta.tipo_cambio)
+
+app.use(process.env.BASE_URI+'/promo',ruta.promos)
 
 // app.use(process.env.BASE_URI+'/marca',)////dentro de producto
 

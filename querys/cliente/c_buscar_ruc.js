@@ -7,12 +7,12 @@ const {config,Connection,Request,TYPES} = require('../../conexion/cadena')
 let bcli_ruc = (req,res,next) => {
     //////////LA LONGUITUD DE LA CADENA SOLO PUEDE SER DE 11
     // let valid_coki = req.signedCookies;
-    let codi=req.params.id;
+    let ruc=req.params.id;
     /////validar el tipo de ruc con otra funcion
-    bd_conexion(res,codi);
+    bd_conexion(res,ruc);
 }
 
-let bd_conexion=(res,codi)=>{
+let bd_conexion=(res,ruc)=>{
     conexion = new Connection(config);
     conexion.connect();
     conexion.on('connect',(err)=>{
@@ -20,16 +20,14 @@ let bd_conexion=(res,codi)=>{
             console.log("ERROR: ",err);
         }
         else{
-            bd_c_query(res,codi);
+            bd_c_query(res,ruc);
         }
     });
 }
 
-let bd_c_query = (res,codi)=>{
-    // let caracter="%"+sugerencia+"%";
-    // let sp_sql="select top 4 codcli,nomcli from mst01cli where estado=1 and nomcli like @pista";
-    // let sp_sql="select ruccli,nomcli,codcdv,tipocl,codcat,Usr_001 from mst01cli where ruccli=@c_ruc";
-    let sp_sql="select codcli,ruccli,nomcli,codcdv,tipocl from mst01cli where estado=1 AND codcli=@codcli";
+let bd_c_query = (res,ruc)=>{
+    // let sp_sql="select codcli,ruccli,nomcli,codcdv,tipocl from mst01cli where estado=1 AND codcli=@codcli";
+    let sp_sql="select codcli,ruccli,nomcli from mst01cli where estado=1 AND ruccli=@ruc";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){
             /////validar la respuesta en de error de servidor
@@ -60,7 +58,7 @@ let bd_c_query = (res,codi)=>{
             }
         }
     })
-    consulta.addParameter('codcli',TYPES.VarChar,codi);
+    consulta.addParameter('ruc',TYPES.VarChar,ruc);
     conexion.execSql(consulta);
     // conexion.callProcedure(consulta);
 }

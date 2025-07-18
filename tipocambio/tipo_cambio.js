@@ -4,9 +4,7 @@ const express = require('express');
 const router = express.Router();
 
 //////ESPACIO PARA FUNCIONES DE COMPROBACION PARA LOS QUERYS
-let {bcli_codi} = require('../querys/cliente/c_buscar_cliente');
 let {bcli_ruc} = require('../querys/cliente/c_buscar_ruc');
-let {bcli_dni} = require('../querys/cliente/c_buscar_dni');
 //////ESPACIO PARA MIDDLEWARE DE OBJETOS PARA PARAMETROS QUE TIENEN TIENE LOS INPUTS CORRECTOS
 const {ruc_largo} = require('../middleware/ruc_diferenciador');
 const {ruc_diferenciador,dni_diferenciador} = require('../middleware/ruc_clasificador');
@@ -22,22 +20,10 @@ const objkeyvalidos=[objeto_verificador_mejorado_permitidos,objeto_verificador_m
 
 router.use(express.json(),express.urlencoded({extended:true}));
 
-///piensa en una manera de pedir el vendedor por varias entradas y con diferentes condiciones
-router.get('/:id',objgeneralesllenos[0],objkeyvalidos[0],bcli_codi)
-router.get('/:id',(req,res,next)=>{res.status(400).send("parametro invalido")})
 /////TENGO Q MANEJAR LOS 3 TIPOS DE CLIENTES QUE EMPIESAN POR 20,10,DNI
-router.get('/ruc/:id',objgeneralesllenos[0],objkeyvalidos[0],ruc_largo,ruc_diferenciador,bcli_ruc)//PARA RUC
-router.get('/ruc/:id',objgeneralesllenos[0],objkeyvalidos[0],ruc_largo,dni_diferenciador,bcli_dni)//PARA DNI
-router.get('/ruc/:id',objgeneralesllenos[0],objkeyvalidos[0],ruc_largo,(req,res)=>{res.status(200).send("fallo algo?")})//PARA DELEGAR
-router.get('/ruc/:id',(req,res,next)=>{res.status(400).send("parametro invalido")})
-//////////VER LA CONDICIONAL DEL PRODUCTO SUMADO A ESTA RUTA
-// router.get('/hp/:tinta',prdcodi)
+router.get('/:id',objgeneralesllenos[0],objkeyvalidos[0],ruc_largo,ruc_diferenciador,bcli_ruc)
+router.get('/:id',objgeneralesllenos[0],objkeyvalidos[0],ruc_largo,dni_diferenciador,)
+router.get('/:id',(req,res,next)=>{res.status(400).send("parametro invalido")})
 
-////////REVISAR SI LA CATEGORIA DEBERIA IR JUNTO CON EL DESCUENTO O EN 2 RUTAS SEPARADAS
-// router.get('/categoria',prdcodi)
-
-// router.get('/dsct',prdcodi)
-
-// router.get('/:sugerido',prdcodi)
 
 module.exports=router

@@ -63,6 +63,9 @@ app.use(process.env.BASE_URI+'/promo',ruta.promos)
 
 app.use(process.env.BASE_URI+'/cotizacion',ruta.cotizacion)
 
+// app.all('*',(req,res)=>{
+//     res.status(400).send("404 recurso no encontrado");
+// })
 // app.use(process.env.BASE_URI+'/marca',)////dentro de producto
 
 app.listen(port,()=>console.log("servicio levantado"))

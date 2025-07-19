@@ -1,5 +1,7 @@
 require('dotenv').config();
-const {config,Connection,Request,TYPES} = require('../../conexion/cadena')
+// const {config,Connection,Request,TYPES} = require('../../conexion/cadena')
+const {Connection,Request,TYPES} = require('../../conexion/cadena')
+const {conn} = require('../../conexion/cnn')
 
 ////////////////VALIDAR LOS VALORES ENTREGADOS
 const cabesera_keys=["fecha","cdocu","ndocu","codcli","nomcli","ruccli","atte","nrefe","requ","mone","tcam","tota","toti","totn","flag","codven","codcdv","cond","fven","dura","cOperacion","obser","estado","obsere","word","obser2","dirent","codscc"];
@@ -11,7 +13,9 @@ async function cotizacion_crear_llamar(req,res,next){
         const segunda_llamada=await obtenerpromesa_consulta1(req,res,primera_llamada);
         const tercera_llamada=await obtenerpromesa_conexion();
         const cuarta_llamada=await obtenerpromesa_consulta3(req,res,tercera_llamada,segunda_llamada);
-        console.log(segunda_llamada);
+        const quinta_llamada=await obtenerpromesa_conexion();
+        const sexta_llamada=await obtenerpromesa_consulta3(req,res,tercera_llamada,segunda_llamada);
+        console.log(cuarta_llamada);
     }
     catch(err){
         console.log(err);
@@ -20,30 +24,46 @@ async function cotizacion_crear_llamar(req,res,next){
 }
 
 function obtenerpromesa_conexion(){
-    return new Promise((resolve,reject)=>conn_llamada(resolve,reject))
-}
-
-function conn_llamada(resolve,reject){
-    let conexion = new Connection(config);
-    conexion.connect();
-    conexion.on('connect',(err)=>{
-        if(err){
-            reject(err);
-        }
-        else{ resolve(conexion); }
-    })
+    return new Promise((resolve,reject)=>conn(resolve,reject))
 }
 
 function obtenerpromesa_consulta1(req,res,conexion,ndocu){
     return new Promise((resolve,reject)=>query_numero_documento(resolve,reject,req,res,conexion))
 }
 
-// function obtenerpromesa_consulta2(req,res,conexion){
-//     return new Promise((resolve,reject)=>query_llamada(resolve,reject,req,res,conexion))
-// }
+function obtenerpromesa_consulta2(req,res,conexion){
+    return new Promise((resolve,reject)=>query_llamada(resolve,reject,req,res,conexion))
+}
 
 function obtenerpromesa_consulta3(req,res,conexion,ndocu){
     return new Promise((resolve,reject)=>query_llamada(resolve,reject,req,res,conexion,ndocu))
+}
+// para la consulta de contactos
+// select * from Dtl01Con where Codn='C08953'
+function query_update_correlativo(resolve,reject,req,res,conexion){
+    let sp_sql="update tbl01cor set nroini=@correlativo where cdocu='31'";
+    let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
+        if(err){
+            conexion.close();
+            reject("error en la consulta de pedir el numero de coti actual")
+            // res.status(401).send("error interno");
+        }
+        else{
+            conexion.close();
+            if(rows.length==0){
+                res.status(400).send("sin resultados? en la busqueda del ndocu");
+            }
+            else{
+                let comodin="009-00";
+                let n_actual = parseInt(rows[0][0]["value"]);
+                let n_calcular=n_actual+1;
+                let formato=comodin+n_calcular.toString();
+                // res.status(400).json({"ndocu":formato});
+                resolve(formato);
+            }
+        }
+    })
+    conexion.execSql(consulta);
 }
 
 function query_numero_documento(resolve,reject,req,res,conexion){
@@ -123,63 +143,63 @@ function query_llamada(resolve,reject,req,res,conexion,ndocu){
 
 
 
-let coti_crear = (req,res,next) => {
-    // let valid_coki = req.signedCookies;    
-    console.log(req.body)
-    res.json(req.body)
+// let coti_crear = (req,res,next) => {
+//     // let valid_coki = req.signedCookies;    
+//     console.log(req.body)
+//     res.json(req.body)
 
-    // bd_conexion(res,req.body)
-}
+//     // bd_conexion(res,req.body)
+// }
 
-let bd_conexion=(res,ruc)=>{
-    conexion = new Connection(config);
-    conexion.connect();
-    conexion.on('connect',(err)=>{
-        if(err){
-            console.log("ERROR: ",err);
-        }
-        else{
-            bd_c_query(res,ruc);
-        }
-    });
-}
+// let bd_conexion=(res,ruc)=>{
+//     conexion = new Connection(config);
+//     conexion.connect();
+//     conexion.on('connect',(err)=>{
+//         if(err){
+//             console.log("ERROR: ",err);
+//         }
+//         else{
+//             bd_c_query(res,ruc);
+//         }
+//     });
+// }
 
-let bd_c_query = (res,ruc)=>{
-    let sp_sql="select GETDATE()";
-    // let sp_sql="GrabaMstCotFac";
-    let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
-        if(err){
-            /////validar la respuesta en de error de servidor
-            conexion.close();
-            res.status(500).send("error interno");
-        }
-        else{
-            conexion.close();
-            if(rows.length==0){
-                /////validar la respuesta en caso de no encontrar nada
-                res.status(200).send("creado satisfactoriamente");
-            }
-            else{
-                let respuesta=[];
-                let respuesta2={};
-                let contador=0;
-                rows.forEach(fila=>{
-                    let tmp={};
-                    fila.map(data=>{
-                        if(contador>=fila.length) contador=0;
-                        typeof data.value=='string' ? tmp[contador]=data.value.trim() : tmp[contador]=data.value;
-                        contador++;
-                    })
-                    respuesta.push(tmp);
-                });
-                Object.assign(respuesta2,respuesta);
-                res.status(200).json(respuesta2);
-            }
-        }
-    })
-    // consulta.addParameter('prdid',TYPES.VarChar,ruc);
-    conexion.execSql(consulta);
-    // conexion.callProcedure(consulta);
-}
-
-module.exports={coti_crear,cotizacion_crear_llamar}
+// let bd_c_query = (res,ruc)=>{
+//     let sp_sql="select GETDATE()";
+//     // let sp_sql="GrabaMstCotFac";
+//     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
+//         if(err){
+//             /////validar la respuesta en de error de servidor
+//             conexion.close();
+//             res.status(500).send("error interno");
+//         }
+//         else{
+//             conexion.close();
+//             if(rows.length==0){
+//                 /////validar la respuesta en caso de no encontrar nada
+//                 res.status(200).send("creado satisfactoriamente");
+//             }
+//             else{
+//                 let respuesta=[];
+//                 let respuesta2={};
+//                 let contador=0;
+//                 rows.forEach(fila=>{
+//                     let tmp={};
+//                     fila.map(data=>{
+//                         if(contador>=fila.length) contador=0;
+//                         typeof data.value=='string' ? tmp[contador]=data.value.trim() : tmp[contador]=data.value;
+//                         contador++;
+//                     })
+//                     respuesta.push(tmp);
+//                 });
+//                 Object.assign(respuesta2,respuesta);
+//                 res.status(200).json(respuesta2);
+//             }
+//         }
+//     })
+//     // consulta.addParameter('prdid',TYPES.VarChar,ruc);
+//     conexion.execSql(consulta);
+//     // conexion.callProcedure(consulta);
+// }
+module.exports={cotizacion_crear_llamar}
+// module.exports={coti_crear,cotizacion_crear_llamar}

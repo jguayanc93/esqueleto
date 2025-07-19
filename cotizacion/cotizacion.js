@@ -4,8 +4,8 @@ const express = require('express');
 const router = express.Router();
 
 //////ESPACIO PARA FUNCIONES DE COMPROBACION PARA LOS QUERYS
-let {coti_crear,cotizacion_crear_llamar} = require('../querys/cotizacion/coti_crear');
-// let {} = require('../querys/cotizacion');
+// let {coti_crear,cotizacion_crear_llamar} = require('../querys/cotizacion/coti_crear');
+let {cotizacion_crear_llamar} = require('../querys/cotizacion/coti_crear');
 //////ESPACIO PARA MIDDLEWARE DE OBJETOS PARA PARAMETROS QUE TIENEN TIENE LOS INPUTS CORRECTOS
 const {validar_cabesera} = require('../middleware/coti_validar_cabesa');
 const {validar_body} = require('../middleware/coti_validar_body');

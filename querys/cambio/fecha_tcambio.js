@@ -4,14 +4,13 @@ const {config,Connection,Request,TYPES} = require('../../conexion/cadena')
 // let observador = (req,res,next) => objevacio(req.signedCookies) ? res.status(401).send("logeate") : next();
 
 let fecha_cambio = (req,res,next) => {
-    //////////LA LONGUITUD DE LA CADENA SOLO PUEDE SER DE 11
     // let valid_coki = req.signedCookies;
-    let codi=req.params.id;
+    // let codi=req.params.id;
     /////validar el tipo de ruc con otra funcion
-    bd_conexion(res,codi);
+    bd_conexion(res);
 }
 
-let bd_conexion=(res,codi)=>{
+let bd_conexion=(res)=>{
     conexion = new Connection(config);
     conexion.connect();
     conexion.on('connect',(err)=>{
@@ -19,13 +18,13 @@ let bd_conexion=(res,codi)=>{
             console.log("ERROR: ",err);
         }
         else{
-            bd_c_query(res,codi);
+            bd_c_query(res);
         }
     });
 }
 
-let bd_c_query = (res,codi)=>{
-    let sp_sql="select tcvta,tcmer from tbl01tca where fecha=@date";
+let bd_c_query = (res)=>{
+    let sp_sql="select tcmer from tbl01tca where fecha=CONVERT(date,GETDATE(),111)";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){
             /////validar la respuesta en de error de servidor
@@ -36,7 +35,7 @@ let bd_c_query = (res,codi)=>{
             conexion.close();
             if(rows.length==0){
                 /////validar la respuesta en caso de no encontrar nada
-                res.status(400).send("no registrado");
+                res.status(400).send("sin respuesta?");
             }
             else{
                 let respuesta=[];
@@ -52,13 +51,12 @@ let bd_c_query = (res,codi)=>{
                     respuesta.push(tmp);
                 });
                 Object.assign(respuesta2,respuesta);
-                res.status(200).json(respuesta2);
+                res.status(200).json(respuesta2[0]);
             }
         }
     })
-    consulta.addParameter('date',TYPES.VarChar,codi);
+    // consulta.addParameter('date',TYPES.VarChar,codi);
     conexion.execSql(consulta);
-    // conexion.callProcedure(consulta);
 }
 
 module.exports={fecha_cambio}

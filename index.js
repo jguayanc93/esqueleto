@@ -26,6 +26,7 @@ app.use(cors(corhabilitaciones))
 
 // app.use([express.json(),cookieParser(process.env.SECRET_PASS)])
 app.use(express.json())
+// app.use(express.urlencoded({extended:true}))
 
 function metodohttpPermitido(req,res,next){
     if(req.method!=='GET'){
@@ -47,7 +48,6 @@ function peticionUrl(req,res,next){
 
 //////funciones de verificacion generales
 const revisionPeticion=[metodohttpPermitido,peticionUrl];
-//////////////////////////////////////////////////
 
 // app.use(process.env.BASE_URI+'/access',)
 
@@ -61,10 +61,8 @@ app.use(process.env.BASE_URI+'/tcambio',ruta.tipo_cambio)
 
 app.use(process.env.BASE_URI+'/promo',ruta.promos)
 
+app.use(process.env.BASE_URI+'/cotizacion',ruta.cotizacion)
+
 // app.use(process.env.BASE_URI+'/marca',)////dentro de producto
-
-// app.use(process.env.BASE_URI+'/dsct',)////dentro de producto
-
-// app.use(process.env.BASE_URI+'/tcm',)////dentro de producto
 
 app.listen(port,()=>console.log("servicio levantado"))

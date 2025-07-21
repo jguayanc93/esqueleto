@@ -6,5 +6,4 @@ const tipo_cambio=require('../tipocambio/tipo_cambio');
 const promos=require('../promociones/promocion');
 const cotizacion=require('../cotizacion/cotizacion');
 
-// module.exports={acc,producto,cliente,marca}
 module.exports={producto,cliente,tipo_cambio,promos,cotizacion}

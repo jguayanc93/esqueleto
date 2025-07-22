@@ -10,6 +10,8 @@ let conjunto_permitidos=[prd_hp_codi,qs_productos_permitidos,hp_productos_permit
 let buscar_descripcion=["dscr"];
 let buscar_partnumber=["prtnb"];
 
+let buscar_personal=["personal"];
+
 const objeto_verificador_mejorado_permitidos_qs = (req,res,next) => {
     let obligatorios=[];
     for(let param of Object.keys(req.query)){
@@ -56,9 +58,24 @@ const objeto_verificador_busqueda_partnumber = (req,res,next) => {
         next();
     }
     else{
-
         next('route');
     }
 }
 
-module.exports={objeto_verificador_mejorado_permitidos_qs,objeto_verificador_busqueda_productos,objeto_verificador_busqueda_partnumber}
+const objeto_verificador_cliente_personal = (req,res,next) => {
+    let obligatorios=[];
+    for(let param of Object.keys(req.query)){
+        if(buscar_personal.includes(param)){
+            obligatorios.push(param);
+        }
+    }
+
+    if(buscar_personal.length===obligatorios.length){
+        next();
+    }
+    else{
+        next('route');
+    }
+}
+
+module.exports={objeto_verificador_mejorado_permitidos_qs,objeto_verificador_busqueda_productos,objeto_verificador_busqueda_partnumber,objeto_verificador_cliente_personal}

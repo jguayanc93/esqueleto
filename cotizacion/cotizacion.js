@@ -30,7 +30,7 @@ router.use(express.urlencoded({extended:true}));
 router.post('/crear',validar_cabesera,validar_body,cotizacion_crear_llamar)
 // router.post('/crear',validar_cabesera,(req,res)=>{res.status(200).send("exitoso la busqueda del index")})
 router.post('/crear',(req,res,next)=>{res.status(400).send("fallo algo en los parametros del cuerpo")})
-router.post('/crear',(req,res,next)=>{res.status(400).send("fallo algo en los parametros generales")})
+// router.post('/crear',(req,res,next)=>{res.status(400).send("fallo algo en los parametros generales")})
 
 
 module.exports=router

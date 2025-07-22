@@ -2,8 +2,11 @@ require('dotenv').config();
 // const {config,Connection,Request,TYPES} = require('../../conexion/cadena')
 const {Connection,Request,TYPES} = require('../../conexion/cadena')
 const {conn} = require('../../conexion/cnn')
-const {coti_objheader_structure} = require('../../funciones/coti_header_addparam_obj')
+// const {coti_objheader_structure} = require('../../funciones/coti_header_addparam_obj')
 const {coti_objbody_structure} = require('../../funciones/coti_detallado_addparam_obj')
+const {query_numero_documento} = require('../../querys/cotizacion/coti_correlativo')
+const {query_llamada} = require('../../querys/cotizacion/coti_generar_cabecera')
+const {recorrer_detallado} = require('../../querys/cotizacion/coti_generar_detallado')
 
 ////////////////VALIDAR LOS VALORES ENTREGADOS
 /* podria usar estos valores ya estan definidos y son todos los necesarios */
@@ -16,9 +19,13 @@ async function cotizacion_crear_llamar(req,res,next){
         const segunda_llamada=await obtenerpromesa_consulta1(primera_llamada);
         const tercera_llamada=await obtenerpromesa_conexion();
         const cuarta_llamada=await obtenerpromesa_consulta2(tercera_llamada,segunda_llamada);
-        const quinta_llamada=await obtenerpromesa_conexion();
-        const sexta_llamada=await obtenerpromesa_consulta3(req,res,quinta_llamada,segunda_llamada);
-        console.log(cuarta_llamada);
+        // const quinta_llamada=await obtenerpromesa_conexion();
+        // const sexta_llamada=await obtenerpromesa_consulta3(req,res,quinta_llamada,segunda_llamada);
+        // const setima_llamada=await obtenerpromesa_conexion();
+        // const octava_llamada=await obtenerpromesa_consulta4(req,res,setima_llamada,segunda_llamada);
+        const novena_llamada=await obtenerpromesa_conexion();
+        const decima_llamada=await obtenerpromesa_consulta5(req,res,novena_llamada,segunda_llamada);
+        console.log(decima_llamada);
     }
     catch(err){
         console.log(err);
@@ -41,6 +48,14 @@ function obtenerpromesa_consulta2(conexion,correlativo){
 function obtenerpromesa_consulta3(req,res,conexion,ndocu){
     return new Promise((resolve,reject)=>query_llamada(resolve,reject,req,res,conexion,ndocu))
 }
+
+function obtenerpromesa_consulta4(req,res,conexion,ndocu){
+    return new Promise((resolve,reject)=>recorrer_detallado(resolve,reject,req,res,conexion,ndocu))
+}
+
+function obtenerpromesa_consulta5(req,res,conexion,correlativo){
+    return new Promise((resolve,reject)=>query_costos(resolve,reject,req,res,conexion,correlativo))
+}
 // para la consulta de contactos
 // select * from Dtl01Con where Codn='C08953'
 function query_update_correlativo(resolve,reject,conexion,correlativo){
@@ -59,111 +74,70 @@ function query_update_correlativo(resolve,reject,conexion,correlativo){
     conexion.execSql(consulta);
 }
 
-function query_numero_documento(resolve,reject,conexion){
-    let sp_sql="select top 1 RIGHT(ndocu,8) as nroactual from mst01cot where LEFT(ndocu,3)='009' order by RIGHT(ndocu,8) desc";
+function query_costos(resolve,reject,req,res,conexion,correlativo){
+    // let formato_codis="('0506-015125','0506-015126')";
+    // agrupacion de solo codis    
+    let valores_parseados2=coti_objbody_structure(req.body["detallado"],correlativo);
+    let codis=[];
+    for(const indice in valores_parseados2){
+        if(Object.keys(valores_parseados2[indice]).includes("codi")){
+            codis.push(valores_parseados2[indice]["codi"][1]);
+        }
+    }
+    ////conseguir este formato ('0506-015125','0506-015126')
+    // console.log(valores_parseados2)
+    // console.log("y estos son los resultados",codis)
+    let contador=1;
+    let formato_codis="(";
+    for(const ide of codis){        
+        formato_codis+="'"+ide+"'";
+        if(codis.length>contador){
+            formato_codis+=",";
+        }
+        contador++;
+    }
+    formato_codis+=")";
+
+
+
+    let sql="select codi,pcus from prd0101 where codi in ";
+    let sp_sql=sql+=formato_codis;
+    console.log(sp_sql);
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){
             conexion.close();
-            reject("error en la consulta de pedir el numero de coti actual")
-            // res.status(401).send("error interno");
+            console.log(err)
+            reject("update correlativo error");
         }
         else{
             conexion.close();
-
-            let comodin="009-00";
-            let n_actual = parseInt(rows[0][0]["value"]);
-            let n_calcular=n_actual+1;
-            let formato=comodin+n_calcular.toString();
-            resolve(formato);
-
-            /* if(rows.length==0){
-                res.status(400).send("sin resultados? en la busqueda del ndocu");
+            if(rows.length==0){
+                /////validar la respuesta en caso de no encontrar nada
+                res.status(200).send("creado satisfactoriamente");
             }
-            else{ } */
+            else{
+                let respuesta=[];
+                let respuesta2={};
+                let contador=0;
+                rows.forEach(fila=>{
+                    let tmp={};
+                    fila.map(data=>{
+                        if(contador>=fila.length) contador=0;
+                        typeof data.value=='string' ? tmp[contador]=data.value.trim() : tmp[contador]=data.value;
+                        contador++;
+                    })
+                    respuesta.push(tmp);
+                });
+                Object.assign(respuesta2,respuesta);
+                console.log(respuesta2);
+                // res.status(200).json(respuesta2);
+            resolve("formato de busuqeda correcto");
+            }
         }
     })
+    // consulta.addParameter('correlativo',TYPES.VarChar,correlativo);
     conexion.execSql(consulta);
 }
-//function query_llamada(resolve,reject,req,res,conexion,ndocu)
-function query_llamada(req,res){
-    /* let valores_a_pasar=Object.values(req.body); */
-    let valores_parseados=coti_objheader_structure(req.body["cabecera"]);
-    let valores_parseados2=coti_objbody_structure(req.body["detallado"])
-    // res.status(200).json(valores_parseados)
-    ////aqui es donde tengo q regresar el objeto ya con sus parametros correcctos de cabesera
-    
-    let sp_sql="GrabaMstCotFac";
-    let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
-        if(err){
-            /////validar la respuesta en de error de servidor
-            conexion.close();
-            res.status(500).send("error interno");
-            reject("sin exito de consulta")
-        }
-        else{
-            conexion.close();
-            res.status(200).send("creado con exito");
-            resolve("exito el regreso");
-        }
-    })
-    /////podria resolverse con esto? pero necesita completar los demas campos de alguna manera
-    for(const input in objaddparametros){
-        consulta.addParameter(input.key,TYPES[input.tipado],input.value);
-    }
-    consulta.addParameter(cabesera_keys[0],TYPES.DateTime,'2025-07-18');
-    consulta.addParameter(cabesera_keys[1],TYPES.Char,'31');
-    consulta.addParameter(cabesera_keys[2],TYPES.Char,ndocu);
-    consulta.addParameter(cabesera_keys[3],TYPES.Char,req.body.codcli);
-    consulta.addParameter(cabesera_keys[4],TYPES.Char,req.body.nomcli);
-    consulta.addParameter(cabesera_keys[5],TYPES.Char,req.body.ruccli);
-    consulta.addParameter(cabesera_keys[6],TYPES.Char,req.body.atte);
-    consulta.addParameter(cabesera_keys[7],TYPES.Char,'');
-    consulta.addParameter(cabesera_keys[8],TYPES.Char,'');
-    consulta.addParameter(cabesera_keys[9],TYPES.Char,req.body.mone);
-    consulta.addParameter(cabesera_keys[10],TYPES.Float,req.body.tcam);
-    consulta.addParameter(cabesera_keys[11],TYPES.Float,req.body.tota);
-    consulta.addParameter(cabesera_keys[12],TYPES.Float,req.body.toti);
-    consulta.addParameter(cabesera_keys[13],TYPES.Float,req.body.totn);
-    consulta.addParameter(cabesera_keys[14],TYPES.Char,req.body.flag);
-    consulta.addParameter(cabesera_keys[15],TYPES.VarChar,'V0261');
-    consulta.addParameter(cabesera_keys[16],TYPES.VarChar,req.body.codcdv);
-    consulta.addParameter(cabesera_keys[17],TYPES.Char,'');
-    consulta.addParameter(cabesera_keys[18],TYPES.VarChar,'2025-07-19');///cuidado con este
-    consulta.addParameter(cabesera_keys[19],TYPES.Float,10);
-    consulta.addParameter(cabesera_keys[20],TYPES.Char,'Nuevo');
-    consulta.addParameter(cabesera_keys[21],TYPES.Char,'');///observacion opcional del cliente
-    consulta.addParameter(cabesera_keys[22],TYPES.Char,'1');
-    consulta.addParameter(cabesera_keys[23],TYPES.Char,'');
-    consulta.addParameter(cabesera_keys[24],TYPES.Int,0);
-    consulta.addParameter(cabesera_keys[25],TYPES.Char,'');
-    consulta.addParameter(cabesera_keys[26],TYPES.VarChar,'');
-    consulta.addParameter(cabesera_keys[27],TYPES.Char,'00');
-    conexion.callProcedure(consulta);
-    // conexion.execSql(consulta);
-}
-
-
-
-// let coti_crear = (req,res,next) => {
-//     // let valid_coki = req.signedCookies;    
-//     console.log(req.body)
-//     res.json(req.body)
-
-//     // bd_conexion(res,req.body)
-// }
-
-// let bd_conexion=(res,ruc)=>{
-//     conexion = new Connection(config);
-//     conexion.connect();
-//     conexion.on('connect',(err)=>{
-//         if(err){
-//             console.log("ERROR: ",err);
-//         }
-//         else{
-//             bd_c_query(res,ruc);
-//         }
-//     });
-// }
 
 // let bd_c_query = (res,ruc)=>{
 //     let sp_sql="select GETDATE()";
@@ -202,5 +176,4 @@ function query_llamada(req,res){
 //     conexion.execSql(consulta);
 //     // conexion.callProcedure(consulta);
 // }
-module.exports={cotizacion_crear_llamar,query_llamada}
-// module.exports={coti_crear,cotizacion_crear_llamar}
+module.exports={cotizacion_crear_llamar}

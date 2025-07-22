@@ -16,8 +16,8 @@ const validar_body = (req,res,next) =>{
         if(Object.keys(req.body["detallado"][index]).length===value_revisar.length){
 
             for(const key in req.body["detallado"][index]){
-                console.log("valor llave",key);
-                console.log("valor comparado",value_revisar[contador]);
+                // console.log("valor llave",key);
+                // console.log("valor comparado",value_revisar[contador]);
                 if(key===value_revisar[contador]){
                     array_interior.push(1);
                 }

@@ -2,9 +2,9 @@
 const {Connection,Request,TYPES} = require('../../conexion/cadena')
 const {coti_objheader_structure} = require('../../funciones/coti_header_addparam_obj');
 
-function query_llamada(resolve,reject,req,res,conexion,correlativo){
+function query_llamada(resolve,reject,req,res,conexion,correlativo,fecha){
     
-    let valores_parseados=coti_objheader_structure(req.body["cabecera"],correlativo);
+    let valores_parseados=coti_objheader_structure(req.body["cabecera"],correlativo,fecha);
     // let valores_parseados2=coti_objbody_structure(req.body["detallado"]);
     let sp_sql="GrabaMstCotFac";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{

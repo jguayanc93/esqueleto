@@ -1,5 +1,5 @@
 
-const key_revisar=["codcli","nomcli","ruccli","atte","mone","tcam","tota","toti","totn","flag","codcdv","fven","dura","obser"];
+const key_revisar=["codcli","nomcli","ruccli","atte","mone","tcam","tota","toti","totn","codcdv","fven","dura","obser"];
 
 const validar_cabesera = (req,res,next) =>{
 

@@ -7,7 +7,8 @@ keys_valores_defecto.cdocu='31';
 keys_valores_defecto.ndocu='009-0000000';///este se insertara de otra manera
 keys_valores_defecto.nrefe='';
 keys_valores_defecto.requ='';
-keys_valores_defecto.codven='V0261';
+keys_valores_defecto.flag='0';
+keys_valores_defecto.codven='V0000';
 keys_valores_defecto.cond='';
 keys_valores_defecto.dura=10;
 keys_valores_defecto.cOperacion='Nuevo';
@@ -19,7 +20,7 @@ keys_valores_defecto.dirent='';
 keys_valores_defecto.codscc='00';
 /////solo serviria creo para la creacion de la cabesera para nada mas
 ////pero se debe hacer dinamico tambien para el cuerpo
-function coti_objheader_structure(paramsheader,ndocu){
+function coti_objheader_structure(paramsheader,ndocu,hoy){
     let ordenado={};
     let enviados=Object.keys(paramsheader);
     let defecto=Object.keys(keys_valores_defecto);
@@ -43,10 +44,8 @@ function coti_objheader_structure(paramsheader,ndocu){
         }
         else if(defecto.includes(parametro)){
             ////aqui inyectamos el correlativo
-            if(parametro==='ndocu'){
-                ordenado[parametro]=[TYPES.Char,ndocu];
-            }
-            else if(parametro==='fecha'){ ordenado[parametro]=[TYPES.DateTime,'2025-07-22']; }
+            if(parametro==='ndocu'){ ordenado[parametro]=[TYPES.Char,ndocu]; }
+            else if(parametro==='fecha'){ ordenado[parametro]=[TYPES.DateTime,hoy[0]]; }
             else{
                 if(typeof keys_valores_defecto[parametro]=='string'){
                     

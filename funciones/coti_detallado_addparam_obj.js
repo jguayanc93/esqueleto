@@ -8,14 +8,15 @@ keys_valores_defecto.cdocu='31';
 keys_valores_defecto.ndocu='009-0000000';///este se insertara de otra manera
 keys_valores_defecto.moneitm='D';
 keys_valores_defecto.aigv='S';
-keys_valores_defecto.item='1';
+keys_valores_defecto.item=1;
 keys_valores_defecto.umed='UND';
 keys_valores_defecto.AnulaDetalle='';
 keys_valores_defecto.codalm='01';
 keys_valores_defecto.cost=50.26;
 keys_valores_defecto.mst='S';
 /////////terminar esta funcion para mañana
-function coti_objbody_structure(paramsbody,ndocu){
+function coti_objbody_structure(paramsbody,ndocu,fecha){
+    console.log("esta es la fecha pasada",fecha);
     let contador=0;
     let ordenado={};
     let enviados=Object.keys(paramsbody);
@@ -38,12 +39,9 @@ function coti_objbody_structure(paramsbody,ndocu){
                 }                
             }
             else if(defecto.includes(parametro)){
-                if(parametro==='fecha'){
-                    ordenado[indice][parametro]=[TYPES.DateTime,'2025-07-30'];
-                    // ordenado[parametro]=[TYPES.DateTime,'2025-07-30'];
-                }
+                if(parametro==='fecha'){ ordenado[indice][parametro]=[TYPES.DateTime,fecha["0"]]; }
                 else if(parametro==='ndocu'){ ordenado[indice][parametro]=[TYPES.Char,ndocu]}
-                else if(parametro==='item'){ ordenado[indice][parametro]=[TYPES.Float,indice+1]}
+                else if(parametro==='item'){ ordenado[indice][parametro]=[TYPES.Float,parseInt(indice)+1]}
                 else{
                     if(typeof keys_valores_defecto[parametro]==='string'){
                         if(keys_valores_defecto[parametro].length<1){
@@ -52,7 +50,7 @@ function coti_objbody_structure(paramsbody,ndocu){
                         else{ ordenado[indice][parametro]=[TYPES.Char,keys_valores_defecto[parametro]]; }
                     }
                     else if(typeof keys_valores_defecto[parametro]==='number'){
-                        ordenado[contador][parametro]=[TYPES.Float,keys_valores_defecto[parametro]];
+                        ordenado[indice][parametro]=[TYPES.Float,keys_valores_defecto[parametro]];
                     }
                 }
             }

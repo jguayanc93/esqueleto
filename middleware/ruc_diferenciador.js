@@ -1,20 +1,18 @@
 
 const ruc_largo = (req,res,next) => {
     let ruc=req.params.id;
-    let longuitud=ruc.length;
-    //////PRIMERO VERIFIQUEMOS QUE SEA EFECTIVAMENTE SEA SOLO UN NUMERO
-    if(!isNaN(ruc)){
+    if(!isNaN(ruc)){//////PRIMERO VERIFIQUEMOS QUE SEA EFECTIVAMENTE SEA SOLO UN NUMERO
         /////DIFERENCIAMOS LA CANTIDAD Y EL COMIENSO DE LA CADENA
-        if(longuitud===11){
-            console.log("es un ruc valido");
+        if(ruc.length===11){
             next();
         }
-        else if(longuitud===8){
-            console.log("puede ser un dni");
+        else if(ruc.length===8){
             next();
         }
         else{
-            console.log("numero fuera de rango");
+            //////mejorar esto
+            // res.set('Content-Type', 'text/html')
+            // res.send(Buffer.from('<p>some html</p>'))
             res.status(400).send("parametro invalido");
         }
     }

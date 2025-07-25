@@ -45,7 +45,7 @@ let bd_conexion=(res,id)=>{
 }
 
 let bd_c_query = (res,id)=>{
-    let sp_sql="select codi,descr,marc,(CAST(stoc as int)-(CAST(svta as int)+CAST(pedi as int))),vvus,Usr_001,codmar,Usr_016 from prd0101 where codi=@ide";
+    let sp_sql="select codi,codf,descr,marc,(CAST(stoc as int)-(CAST(svta as int)+CAST(pedi as int))),vvus,Usr_001,codmar,Usr_016 from prd0101 where codi=@ide";
         
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){

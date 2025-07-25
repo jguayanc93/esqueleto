@@ -1,38 +1,36 @@
 require('dotenv').config();
 
-const {config,Connection,Request,TYPES} = require('../../conexion/cadena')
-
+const {Request,TYPES} = require('../../conexion/cadena')
+const {conn} = require('../../conexion/cnn')
+////temporal para los nombres
+const {cliente_ruc} = require('../../id_nombres/lista')
+const asignador_identificadores = require('../../funciones/asignador_indice_nombre')
 // let observador = (req,res,next) => objevacio(req.signedCookies) ? res.status(401).send("logeate") : next();
 
-let bcli_ruc = (req,res,next) => {
-    //////////LA LONGUITUD DE LA CADENA SOLO PUEDE SER DE 11
-    // let valid_coki = req.signedCookies;
+async function bcli_ruc(req,res,next) {
+    try{
+        const primera_llamada=await obtenerpromesa_conexion();
+        const segunda_llamada=await obtenerpromesa_consulta1(primera_llamada,req,res,next);
+    }
+    catch(err){
+        console.log(err);
+    }
+}
+
+function obtenerpromesa_conexion(){ return new Promise((resolve,reject)=>conn(resolve,reject)) }
+
+function obtenerpromesa_consulta1(conexion,req,res,next){
+    return new Promise((resolve,reject)=>query_cliente_ruc(resolve,reject,conexion,req,res,next))
+}
+
+let query_cliente_ruc = (resolve,reject,conexion,req,res,next)=>{
     let ruc=req.params.id;
-    /////validar el tipo de ruc con otra funcion
-    bd_conexion(res,ruc);
-}
-
-let bd_conexion=(res,ruc)=>{
-    conexion = new Connection(config);
-    conexion.connect();
-    conexion.on('connect',(err)=>{
-        if(err){
-            console.log("ERROR: ",err);
-        }
-        else{
-            bd_c_query(res,ruc);
-        }
-    });
-}
-
-let bd_c_query = (res,ruc)=>{
-    // let sp_sql="select codcli,ruccli,nomcli,codcdv,tipocl from mst01cli where estado=1 AND codcli=@codcli";
     let sp_sql="select codcli,ruccli,nomcli from mst01cli where estado=1 AND ruccli=@ruc";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){
-            /////validar la respuesta en de error de servidor
             conexion.close();
-            res.status(500).send("error interno");
+            // res.status(500).send("error interno");
+            reject("error request");
         }
         else{
             conexion.close();
@@ -53,8 +51,13 @@ let bd_c_query = (res,ruc)=>{
                     })
                     respuesta.push(tmp);
                 });
+                ////podria transformarlo en una funcion para reutilisarlo para cada consulta
+                let respuesta3=asignador_identificadores(respuesta[0],cliente_ruc,1);
                 Object.assign(respuesta2,respuesta);
-                res.status(200).json(respuesta2);
+                console.log(respuesta);
+                console.log(respuesta2)
+                console.log(respuesta3);
+                res.status(200).json(respuesta3);
             }
         }
     })

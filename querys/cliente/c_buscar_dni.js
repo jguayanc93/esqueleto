@@ -6,6 +6,7 @@ const {config,Connection,Request,TYPES} = require('../../conexion/cadena')
 
 let bcli_dni = (req,res,next) => {
     
+    
     let dni=req.params.id;
     /////validar el tipo de ruc con otra funcion
     let ruc_completado="DNI"+dni;

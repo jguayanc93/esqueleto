@@ -10,20 +10,30 @@ const asignador_identificadores = require('../../funciones/asignador_indice_nomb
 async function bcli_ruc(req,res,next) {
     try{
         const primera_llamada=await obtenerpromesa_conexion();
-        const segunda_llamada=await obtenerpromesa_consulta1(primera_llamada,req,res,next);
+        const segunda_llamada=await obtenerpromesa_consulta1(primera_llamada,req,next);
+        //////separacion de logica para la formacion de la respuesta
+        const tercera_llamada=asignador_identificadores(segunda_llamada[0],cliente_ruc,1);
+        res.status(200).json(tercera_llamada);
     }
     catch(err){
+        // el error debe ser manejado de otra manera
+        console.log("deberia ser disparado en el reject");
         console.log(err);
+        res.status(400).json({
+            "status":"ERROR",
+            "codigo":2,
+            "msg":err
+        })
     }
 }
 
 function obtenerpromesa_conexion(){ return new Promise((resolve,reject)=>conn(resolve,reject)) }
 
-function obtenerpromesa_consulta1(conexion,req,res,next){
-    return new Promise((resolve,reject)=>query_cliente_ruc(resolve,reject,conexion,req,res,next))
+function obtenerpromesa_consulta1(conexion,req,next){
+    return new Promise((resolve,reject)=>query_cliente_ruc(resolve,reject,conexion,req,next))
 }
 
-let query_cliente_ruc = (resolve,reject,conexion,req,res,next)=>{
+let query_cliente_ruc = (resolve,reject,conexion,req,next)=>{
     let ruc=req.params.id;
     let sp_sql="select codcli,ruccli,nomcli from mst01cli where estado=1 AND ruccli=@ruc";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
@@ -36,11 +46,12 @@ let query_cliente_ruc = (resolve,reject,conexion,req,res,next)=>{
             conexion.close();
             if(rows.length==0){
                 /////validar la respuesta en caso de no encontrar nada
-                res.status(400).send("no registrado");
+                // res.status(400).send("no registrado");
+                reject("no registrado");
             }
             else{
                 let respuesta=[];
-                let respuesta2={};
+                // let respuesta2={};////YA NO SERVIRIA PORQUE TIENE OTRA ESTRUCTURA
                 let contador=0;
                 rows.forEach(fila=>{
                     let tmp={};
@@ -51,13 +62,14 @@ let query_cliente_ruc = (resolve,reject,conexion,req,res,next)=>{
                     })
                     respuesta.push(tmp);
                 });
-                ////podria transformarlo en una funcion para reutilisarlo para cada consulta
-                let respuesta3=asignador_identificadores(respuesta[0],cliente_ruc,1);
-                Object.assign(respuesta2,respuesta);
-                console.log(respuesta);
-                console.log(respuesta2)
-                console.log(respuesta3);
-                res.status(200).json(respuesta3);
+                ////esta funcion debe separarse porque no tiene nada que ver dentro de del request
+                // let respuesta3=asignador_identificadores(respuesta[0],cliente_ruc,1);
+                // Object.assign(respuesta2,respuesta);////YA NO SERVIRIA PORQUE TIENE OTRA ESTRUCTURA
+                // console.log(respuesta);///solo es para tratar la data
+                // console.log(respuesta2)///ya no sirve
+                // console.log(respuesta3);
+                // res.status(200).json(respuesta3);
+                resolve(respuesta);
             }
         }
     })

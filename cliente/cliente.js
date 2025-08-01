@@ -40,9 +40,6 @@ router.get('/ruc/:id',objgeneralesllenos[0],objkeyvalidos[0],ruc_largo,dni_difer
 router.get('/ruc/:id',objgeneralesllenos[0],objkeyvalidos[0],ruc_largo,(req,res)=>{res.status(200).send("fallo algo?")})//PARA DELEGAR
 router.get('/ruc/:id',(req,res,next)=>{res.status(400).send("parametro invalido")})
 
-//////////VER LA CONDICIONAL DEL PRODUCTO SUMADO A ESTA RUTA
-// router.get('/hp/:tinta',prdcodi)
-//router.get('/hp')///podria ir dentro del mismo detallado del cliente
 
 // router.get('/dsct',prdcodi)
 

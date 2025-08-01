@@ -37,7 +37,7 @@ const revisionPeticion=[peticionUrl];
 
 app.use(process.env.BASE_URI+'/producto',ruta.producto)////CORREGIR
 
-app.use(process.env.BASE_URI+'/cliente',ruta.cliente)///CORRIGIENDO
+app.use(process.env.BASE_URI+'/cliente',ruta.cliente)///CASI CORRIGIDO
 
 app.use(process.env.BASE_URI+'/tcambio',ruta.tipo_cambio)////CORREGIR
 

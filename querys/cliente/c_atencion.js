@@ -6,7 +6,6 @@ const {conn} = require('../../conexion/cnn')
 //////////ESTO ES EN PARA ACORTAR EL CAMINO PORQUE YA SE VALIDO CON LOS MIDDLEWARE ANTERIORES LOS PARAMETROS
 async function bcli_personal(req,res,next){
     try{
-        console.log("fui llamado");
         const primera_llamada=await obtener_conexion();
         const segunda_llamada=await obtener_consulta1(req,primera_llamada);
         // console.log(segunda_llamada);
@@ -14,7 +13,11 @@ async function bcli_personal(req,res,next){
     }
     catch(err){
         console.log(err);
-        res.status(400).send("parametros invalidos");
+        res.status(400).json({
+            "status":"ERROR",
+            "codigo":2,
+            "msg":err
+        })
     }
 }
 
@@ -32,15 +35,14 @@ let query_cliente_atencion = (resolve,reject,req,conexion)=>{
         if(err){
             /////validar la respuesta en de error de servidor
             conexion.close();
-            console.log(err);
-            reject("error en la consulta");
+            reject("error request");
             // res.status(500).send("error interno");
         }
         else{
             conexion.close();
             if(rows.length==0){
                 /////validar la respuesta en caso de no encontrar nada
-                reject("sin resultados?");
+                reject("no registros");
                 // res.status(400).send("sin resultados?");
             }
             else{
@@ -60,9 +62,7 @@ let query_cliente_atencion = (resolve,reject,req,conexion)=>{
 
                 let disponibles=[];
 
-                for(const personas in respuesta){
-                    disponibles.push(respuesta[personas][0])
-                }
+                for(const personas in respuesta){ disponibles.push(respuesta[personas][0]) }
                 Object.assign(respuesta2,disponibles);
                 // console.log(respuesta2);
                 resolve(respuesta2)

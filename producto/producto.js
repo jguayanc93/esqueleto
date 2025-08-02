@@ -34,9 +34,9 @@ router.use(express.json(),express.urlencoded({extended:true}));
 router.get('/',(req,res)=>{ res.status(200).send("ruta productos"); })
 
 router.get('/categorias',bprd_fam)////producto rango de familia
-router.get('/categorias/:catID',bprd_fam)////producto rango de familia con o sin identificador
+// router.get('/categorias/:catID',bprd_fam)////POSIBLE REDUNDANCIA
 router.get('/categorias/:catID/subcategoria',bprd_subfam)////producto rango de subfamilia en fam identificadda
-router.get('/categorias/:catID/subcategoria/:sbfamID',bprd_subfam)////producto rango de subfamilia en fam identificadda
+// router.get('/categorias/:catID/subcategoria/:sbfamID',bprd_subfam)////POSIBLE REDUNDANCIA
 
 router.get('/listado',bprd_list) ////COMENSAR CON LA BUSQUEDA DEL PRODUCTOS CON QUERY STRINGS (fam/sbfam/stoc)
 // router.get('/listado/:grupo',) ////identificador del codi

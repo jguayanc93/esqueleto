@@ -3,4 +3,9 @@ const cliente_ruc=["codcli","ruccli","nomcli"];
 
 const cliente=["codcli","ruccli","nomcli","tipcli","restriccli"];
 
-module.exports={cliente_ruc,cliente}
+const familias=["codfam","nomfam"];
+const subfamilias=["codsub","nomsub"];
+
+const producto=["codi","codf","descr","marc","stoc","partnumb","codmar","etiqueta","restriccion"];
+
+module.exports={cliente_ruc,cliente,familias,subfamilias,producto}

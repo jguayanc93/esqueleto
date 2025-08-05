@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const router = express.Router();
+const jwt = require('jsonwebtoken')
 
 //////ESPACIO PARA FUNCIONES DE COMPROBACION PARA LOS QUERYS
 let {prom_search} = require('../querys/promociones/prom_buscador');
@@ -19,7 +20,27 @@ const objkeyvalidos=[objeto_verificador_mejorado_permitidos,objeto_verificador_m
 
 router.use(express.json(),express.urlencoded({extended:true}));
 
-router.get('/',(req,res,next)=>{res.status(200).send("pendiente")})
+router.get('/',(req,res,next)=>{res.status(200).send("ruta promocion")})
+
+router.get('/producto',(req,res,next)=>{
+    res.status(200).json({"msg":"verificar que promo es llamado segun producto"})
+})
+
+router.get('/token',(req,res)=>{
+    let authorization= req.headers.authorization;
+    if(!authorization || !authorization.startsWith('Bearer ')){
+        return res.status(401).json({"msg":"Unauthorized: Missing or invalid token"})
+    }
+
+    const token=authorization.split(' ')[1];
+    try{
+        const decoded = jwt.verify(token,process.env.PALABRA_CLAVE)
+        res.status(200).send("token valido");
+    }
+    catch(err){
+        return res.status(401).json({"msg":"Unauthorized: invalid token"})
+    }
+})
 
 
 module.exports=router

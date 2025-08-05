@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const express = require('express')
 const cors = require('cors')
+const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
 
 const corhabilitaciones=require('./cors/conf')
@@ -33,7 +34,24 @@ function peticionUrl(req,res,next){
 //////funciones de verificacion generales
 const revisionPeticion=[peticionUrl];
 
-// app.use(process.env.BASE_URI+'/access',)
+app.get(process.env.BASE_URI+'/access',(req,res)=>{
+    console.log(req.body)
+    if(!req.body.user || !req.body.pass){
+        return res.status(401).json({
+            "msg":"invalid data"
+        })
+    }
+    
+    let carga={
+        "usuario":req.body.user,
+        "cliente":"C00904"
+    }
+    let token= jwt.sign(carga,process.env.PALABRA_CLAVE,{expiresIn:35})
+    res.status(200).json({
+        "usuario":"prueba",
+        "token":token
+    })
+})
 
 app.use(process.env.BASE_URI+'/producto',ruta.producto)////CORREGIR
 
@@ -45,9 +63,6 @@ app.use(process.env.BASE_URI+'/promo',ruta.promos)///CORREGIR
 
 app.use(process.env.BASE_URI+'/cotizacion',ruta.cotizacion)///CORREGIR
 
-// app.all('*',(req,res)=>{
-//     res.status(400).send("404 recurso no encontrado");
-// })
 // app.use(process.env.BASE_URI+'/marca',)////dentro de producto
 
 app.listen(port,()=>console.log("servicio levantado"))

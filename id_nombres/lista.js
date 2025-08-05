@@ -8,4 +8,6 @@ const subfamilias=["codsub","nomsub"];
 
 const producto=["codi","codf","descr","marc","stoc","partnumb","codmar","etiqueta","restriccion"];
 
-module.exports={cliente_ruc,cliente,familias,subfamilias,producto}
+const prdcodi=["codi","codf","descr","marc","stoc","partnumb","codmar","etiqueta","restriccion","precio","descuento"];
+
+module.exports={cliente_ruc,cliente,familias,subfamilias,producto,prdcodi}

@@ -41,7 +41,8 @@ router.get('/categorias/:catID/subcategoria',bprd_subfam)////producto rango de s
 router.get('/listado',bprd_list) ////COMENSAR CON LA BUSQUEDA DEL PRODUCTOS CON QUERY STRINGS (fam/sbfam/stoc)
 // router.get('/listado/:grupo',) ////identificador del codi
 
-router.get('/codi/:id',bprd_id) ////identificador del codi
+router.get('/codi/:id',bprd_id) ////identificador del codi//EL CLIENTE PODRIA SACARSE DEL TOKEN
+/////////////////////////
 // router.get('/codi/:id/descuento/:marca',bprd_dscto) ////aca sacaremos el descuento por solicitud
 router.get('/codi/:id/descuento',bprd_dscto) ////aca sacaremos el descuento por solicitud con qs
 

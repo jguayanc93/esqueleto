@@ -3,7 +3,7 @@ require('dotenv').config();
 const {config,Connection,Request,TYPES} = require('../../conexion/cadena')
 const {conn} = require('../../conexion/cnn')
 
-const {producto} = require('../../id_nombres/lista')
+const {prdcodi} = require('../../id_nombres/lista')
 const asignador_identificadores = require('../../funciones/asignador_indice_nombre')
 
 const {objevacio,objepropiedades} = require('../../funciones/objvacio')
@@ -13,7 +13,7 @@ async function bprd_id(req,res,next) {
     try{
         const primera_llamada= await obtenerpromesa_conexion();
         const segunda_llamada= await obtenerpromesa_consulta1(req,primera_llamada);
-        const tercera_llamada= asignador_identificadores(segunda_llamada,producto,1)
+        const tercera_llamada= asignador_identificadores(segunda_llamada[0],prdcodi,1)
         res.status(200).json(tercera_llamada);
     }
     catch(err){
@@ -56,7 +56,13 @@ function obtenerpromesa_consulta1(req,conexion){
 
 
 let query_prd = (resolve,reject,req,conexion)=>{
-    let sp_sql="select codi,codf,descr,marc,(CAST(stoc as int)-(CAST(svta as int)+CAST(pedi as int))),vvus,Usr_001,codmar,Usr_016 from prd0101 where codi=@ide";
+    let cli='C00904';
+    let id=req.params.id;
+    let letra='F';    
+    // let sp_sql="select a.codi,a.codf,a.descr,a.marc,(CAST(a.stoc as int)-(CAST(a.svta as int)+CAST(a.pedi as int))),a.Usr_001,a.codmar,a.Usr_016,a.vvus,b.dscto_default,b.dscto_maxven from prd0101 a inner join dtl_dscto_marca_tc b on (b.codmar=a.codmar AND b.codtcl=@letra) where a.codi=@ide";
+    // let sp_sql="select a.codi,a.codf,a.descr,a.marc,(CAST(a.stoc as int)-(CAST(a.svta as int)+CAST(a.pedi as int))),a.Usr_001,a.codmar,a.Usr_016,a.vvus,('min:'+CAST(b.dscto_default as varchar)+' '+'max:'+CAST(b.dscto_maxven as varchar)) from prd0101 a inner join dtl_dscto_marca_tc b on (b.codmar=a.codmar AND b.codtcl=@letra) where a.codi=@ide";
+    // let sp_sql="select a.codi,a.codf,a.descr,a.marc,(CAST(a.stoc as int)-(CAST(a.svta as int)+CAST(a.pedi as int))),a.Usr_001,a.codmar,a.Usr_016,(CASE WHEN ISNULL(c.codi,'LIBRE')='LIBRE' THEN 'LIBERADO' WHEN ISNULL(c.codi,'LIBRE')<>'LIBRE' THEN 'RESTRINGUIDO' END),a.vvus,('min:'+CAST(b.dscto_default as varchar)+'%'+' '+'max:'+CAST(b.dscto_maxven as varchar)+'%') from prd0101 a inner join dtl_dscto_marca_tc b on (b.codmar=a.codmar AND b.codtcl=@letra) left join ListaHp3 c on (c.codi=a.codi) where a.codi=@ide";
+    let sp_sql="select a.codi,a.codf,a.descr,a.marc,(CAST(a.stoc as int)-(CAST(a.svta as int)+CAST(a.pedi as int))),a.Usr_001,a.codmar,a.Usr_016,dbo.producto_hp_api(a.codi,@cliente),a.vvus,('min:'+CAST(b.dscto_default as varchar)+'%'+' '+'max:'+CAST(b.dscto_maxven as varchar)+'%') from prd0101 a inner join dtl_dscto_marca_tc b on (b.codmar=a.codmar AND b.codtcl=@letra) where a.codi=@ide";
         
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){
@@ -91,6 +97,8 @@ let query_prd = (resolve,reject,req,conexion)=>{
             }
         }
     })
+    consulta.addParameter('cliente',TYPES.VarChar,cli);
+    consulta.addParameter('letra',TYPES.VarChar,letra);
     consulta.addParameter('ide',TYPES.VarChar,id);
     conexion.execSql(consulta);
 }

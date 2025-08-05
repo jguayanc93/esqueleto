@@ -34,6 +34,19 @@ let asignador_identificadores = (respuesta,indices,profundidad,cabecera_comodin=
             
         });
     }
+    /////algo momentaneo
+    // else if(profundidad==='unico'){
+    //     for(const valor of Object.values(respuesta)){
+    //         if(indices[numero_indice]==='descuento'){
+
+    //         }
+    //         else{
+    //             mejorado[indices[numero_indice]]=valor;
+    //         }
+    //         numero_indice++;
+    //     }
+    //     numero_indice=0;
+    // }
 
     //////////////ASIGNAR UN MENSAJE CON CODIGO DE STATUS Y REFERENCIA DE CUERPO CON SU CONTENIDO
     //////////////ENVIAR LA ESTRUCTURA DE LAS CABECERAS EN LAS RESPUESTAS

@@ -34,19 +34,38 @@ let asignador_identificadores = (respuesta,indices,profundidad,cabecera_comodin=
             
         });
     }
-    /////algo momentaneo
-    // else if(profundidad==='unico'){
-    //     for(const valor of Object.values(respuesta)){
-    //         if(indices[numero_indice]==='descuento'){
+    ///algo momentaneo
+    else if(profundidad==='unico'){
+        for(const valor of Object.values(respuesta)){
+            if(indices[numero_indice]==='promocion'){
+                if(valor==='NO'){
+                    mejorado[indices[numero_indice]]=valor;
+                }
+                else{
+                    // let num_indice=0;
+                    let removido="";
+                    if(valor.endsWith("|")) removido=valor.slice(0,valor.length-1);
+                    else{removido=valor}
+                    
+                    let prom_cantidad=removido.split("|");
+                    
+                    let objeto_momentaneo={}
+                    objeto_momentaneo["cantidad"]=prom_cantidad.length;
 
-    //         }
-    //         else{
-    //             mejorado[indices[numero_indice]]=valor;
-    //         }
-    //         numero_indice++;
-    //     }
-    //     numero_indice=0;
-    // }
+                    for(const descripcion of prom_cantidad){
+                        let identificador=descripcion.split(":");
+                        objeto_momentaneo[identificador[0]]=identificador[1];
+                    }
+                    mejorado[indices[numero_indice]]=objeto_momentaneo;
+                }                
+            }
+            else{
+                mejorado[indices[numero_indice]]=valor;
+            }
+            numero_indice++;
+        }
+        numero_indice=0;
+    }
 
     //////////////ASIGNAR UN MENSAJE CON CODIGO DE STATUS Y REFERENCIA DE CUERPO CON SU CONTENIDO
     //////////////ENVIAR LA ESTRUCTURA DE LAS CABECERAS EN LAS RESPUESTAS

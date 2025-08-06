@@ -43,8 +43,7 @@ router.get('/listado',bprd_list) ////COMENSAR CON LA BUSQUEDA DEL PRODUCTOS CON 
 
 router.get('/codi/:id',bprd_id) ////identificador del codi//EL CLIENTE PODRIA SACARSE DEL TOKEN
 /////////////////////////
-// router.get('/codi/:id/descuento/:marca',bprd_dscto) ////aca sacaremos el descuento por solicitud
-router.get('/codi/:id/descuento',bprd_dscto) ////aca sacaremos el descuento por solicitud con qs
+// router.get('/codi/:id/descuento',bprd_dscto) ////aca sacaremos el descuento por solicitud con qs
 
 // FALTA LOS DE HP SI ES VALIDO EL CLIENTE LA CONSULTA
 ////diferenciar el tipo de producto(suministro,ploter) y luego ver si esta habilitado el cliente

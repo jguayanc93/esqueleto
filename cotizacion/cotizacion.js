@@ -5,7 +5,7 @@ const router = express.Router();
 
 //////ESPACIO PARA FUNCIONES DE COMPROBACION PARA LOS QUERYS
 // let {coti_crear,cotizacion_crear_llamar} = require('../querys/cotizacion/coti_crear');
-let {cotizacion_crear_llamar} = require('../querys/cotizacion/coti_crear');
+let {llamar_crear,cotizacion_crear_llamar} = require('../querys/cotizacion/coti_crear');
 //////ESPACIO PARA MIDDLEWARE DE OBJETOS PARA PARAMETROS QUE TIENEN TIENE LOS INPUTS CORRECTOS
 const {validar_cabesera} = require('../middleware/coti_validar_cabesa');
 const {validar_body} = require('../middleware/coti_validar_body');
@@ -26,11 +26,18 @@ router.use(express.urlencoded({extended:true}));
 // router.get('/crear',objgeneralesllenos[0],objkeyvalidos[0],ruc_largo,ruc_diferenciador,bcli_ruc)//PARA RUC
 // router.post('/crear',coti_crear)
 // MANEJAR MULTIPLES PETICIONES A LA MISMA RUTA NUEVO METODO
-// router.post('/crear',validar_cabesera,cotizacion_crear_llamar)
-router.post('/crear',validar_cabesera,validar_body,cotizacion_crear_llamar)
-// router.post('/crear',validar_cabesera,(req,res)=>{res.status(200).send("exitoso la busqueda del index")})
-router.post('/crear',(req,res,next)=>{res.status(400).send("fallo algo en los parametros del cuerpo")})
-// router.post('/crear',(req,res,next)=>{res.status(400).send("fallo algo en los parametros generales")})
+
+// router.post('/crear',validar_cabesera,validar_body,cotizacion_crear_llamar)////RUTA VERSION 1
+
+router.post('/crear',llamar_crear)
+
+// router.post('/crear',(req,res,next)=>{
+//     console.log(req.body.coti);
+//     console.log(req.body.coti.productos);
+//     res.status(200).json(req.body)
+// })
+
+// router.post('/crear',(req,res,next)=>{res.status(400).send("fallo algo en los parametros del cuerpo")})
 
 
 module.exports=router

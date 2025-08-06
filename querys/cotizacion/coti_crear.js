@@ -9,12 +9,31 @@ const {query_update_correlativo} = require('../../querys/cotizacion/coti_update_
 const {query_costos} = require('../../querys/cotizacion/coti_costos_correctos')
 const {query_llamada} = require('../../querys/cotizacion/coti_generar_cabecera')
 const {recorrer_detallado} = require('../../querys/cotizacion/coti_generar_detallado')
+//////////////////////
+const {productos_bucle} = require('../../querys/cotizacion/coti_detallado_info_v2')
+const {query_calculo_totalisados} = require('../../querys/cotizacion/coti_totalisados_v2')
+const {query_calculo_cabecera} = require('../../querys/cotizacion/coti_cabecera_totalisado_v2')
 
 ////////////////VALIDAR LOS VALORES ENTREGADOS
 /* podria usar estos valores ya estan definidos y son todos los necesarios */
 const cabesera_keys=["fecha","cdocu","ndocu","codcli","nomcli","ruccli","atte","nrefe","requ","mone","tcam","tota","toti","totn","flag","codven","codcdv","cond","fven","dura","cOperacion","obser","estado","obsere","word","obser2","dirent","codscc"];
 const cuerpo_keys=["fecha","cdocu","ndocu","codcli","tcam","mone","moneitm","aigv","item","codi","codf","marc","umed","descr","cant","preu","tota","dsct","totn","AnulaDetalle","codalm","cost","msto"];
 // tengo que ver la manera de pasar los parametros para el query en un objeto dinamico
+async function llamar_crear(req,res,next) {
+    try{
+        const primera_llamada= await obtenerpromesa_conexion();
+        const paso2= await consulta1(req,primera_llamada);
+        const paso3= await consulta2(req);
+        const segunda_llamada= await obtenerpromesa_conexion();
+        const paso4= await consulta3(req,segunda_llamada);
+        res.status(200).json(paso4);
+    }
+    catch(err){
+        console.log(err)
+        res.status(400).send(err);
+    }
+}
+
 async function cotizacion_crear_llamar(req,res,next){
     try{
         const primera_llamada=await obtenerpromesa_conexion();
@@ -45,6 +64,14 @@ async function cotizacion_crear_llamar(req,res,next){
 }
 
 function obtenerpromesa_conexion(){ return new Promise((resolve,reject)=>conn(resolve,reject)) }
+///// nuevos metodos
+function consulta1(req,conexion){ return new Promise((resolve,reject)=>productos_bucle(resolve,reject,req,conexion)) }
+
+function consulta2(req){ return new Promise((resolve,reject)=>query_calculo_totalisados(resolve,reject,req)) }
+
+function consulta3(req,conexion){ return new Promise((resolve,reject)=>(resolve,reject,req,conexion)) }
+
+function consulta4(req){ return new Promise((resolve,reject)=>query_calculo_cabecera(resolve,reject,req))}
 
 function obtenerpromesa_consulta1(conexion){
     return new Promise((resolve,reject)=>query_numero_documento(resolve,reject,conexion))
@@ -129,4 +156,4 @@ function corregir_costos(resolve,reject,req,costos,correlativo,fecha){
 
 
 
-module.exports={cotizacion_crear_llamar}
+module.exports={llamar_crear,cotizacion_crear_llamar}

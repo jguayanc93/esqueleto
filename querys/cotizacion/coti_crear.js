@@ -13,6 +13,8 @@ const {recorrer_detallado} = require('../../querys/cotizacion/coti_generar_detal
 const {productos_bucle} = require('../../querys/cotizacion/coti_detallado_info_v2')
 const {query_calculo_totalisados} = require('../../querys/cotizacion/coti_totalisados_v2')
 const {query_calculo_cabecera} = require('../../querys/cotizacion/coti_cabecera_totalisado_v2')
+const {cabecera_estructura} = require('../../querys/cotizacion/coti_header_info_v2')
+const {} = require('../../querys/cotizacion/coti_header_info_v3')
 
 ////////////////VALIDAR LOS VALORES ENTREGADOS
 /* podria usar estos valores ya estan definidos y son todos los necesarios */
@@ -24,9 +26,11 @@ async function llamar_crear(req,res,next) {
         const primera_llamada= await obtenerpromesa_conexion();
         const paso2= await consulta1(req,primera_llamada);
         const paso3= await consulta2(req);
+        const paso4= await consulta3(req);
+        const paso5= await consulta4(req);
         const segunda_llamada= await obtenerpromesa_conexion();
-        const paso4= await consulta3(req,segunda_llamada);
-        res.status(200).json(paso4);
+        const paso6= await consulta5(req,segunda_llamada);
+        res.status(200).json(paso5);
     }
     catch(err){
         console.log(err)
@@ -68,10 +72,12 @@ function obtenerpromesa_conexion(){ return new Promise((resolve,reject)=>conn(re
 function consulta1(req,conexion){ return new Promise((resolve,reject)=>productos_bucle(resolve,reject,req,conexion)) }
 
 function consulta2(req){ return new Promise((resolve,reject)=>query_calculo_totalisados(resolve,reject,req)) }
-
-function consulta3(req,conexion){ return new Promise((resolve,reject)=>(resolve,reject,req,conexion)) }
+///no le puse nombre ala funcion??
+function consulta3(req,conexion){ return new Promise((resolve,reject)=>cabecera_estructura(resolve,reject,req,conexion)) }
 
 function consulta4(req){ return new Promise((resolve,reject)=>query_calculo_cabecera(resolve,reject,req))}
+
+function consulta5(req,conexion){ return new Promise((resolve,reject)=>query_(resolve,reject,req,conexion))}
 
 function obtenerpromesa_consulta1(conexion){
     return new Promise((resolve,reject)=>query_numero_documento(resolve,reject,conexion))

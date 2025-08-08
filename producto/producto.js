@@ -45,8 +45,8 @@ router.get('/codi/:id',bprd_id) ////identificador del codi//EL CLIENTE PODRIA SA
 /////////////////////////
 // router.get('/codi/:id/descuento',bprd_dscto) ////aca sacaremos el descuento por solicitud con qs
 
-// NUEVO METODO DE CAMINOS CON MIDDLEWARE
-////VALIDAR LOS PARAMETROS INSERTADOS QUE SEAN CORRECTOS
+// NUEVO METODO DE CAMINOS CON MIDDLEWARE ////VALIDAR LOS PARAMETROS INSERTADOS QUE SEAN CORRECTOS
+
 router.get('/hp/:id',objgeneralesllenos,objkeyvalidos,bprd_hp) ////diferenciar el tipo de producto(suministro,ploter) y luego ver si esta habilitado el cliente
 router.get('/hp/:id',objgeneralesllenos[0],objkeyvalidos[0],bprd_hp_cliente)
 router.get('/hp/:id',(req,res,next)=>{ res.status(400).send("parametros invalido"); })

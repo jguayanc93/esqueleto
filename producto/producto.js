@@ -45,8 +45,6 @@ router.get('/codi/:id',bprd_id) ////identificador del codi//EL CLIENTE PODRIA SA
 /////////////////////////
 // router.get('/codi/:id/descuento',bprd_dscto) ////aca sacaremos el descuento por solicitud con qs
 
-// FALTA LOS DE HP SI ES VALIDO EL CLIENTE LA CONSULTA
-////diferenciar el tipo de producto(suministro,ploter) y luego ver si esta habilitado el cliente
 // NUEVO METODO DE CAMINOS CON MIDDLEWARE
 ////VALIDAR LOS PARAMETROS INSERTADOS QUE SEAN CORRECTOS
 router.get('/hp/:id',objgeneralesllenos,objkeyvalidos,bprd_hp) ////diferenciar el tipo de producto(suministro,ploter) y luego ver si esta habilitado el cliente

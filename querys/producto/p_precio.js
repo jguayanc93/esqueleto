@@ -32,38 +32,11 @@ function obtenerpromesa_consulta1(req,conexion){
     return new Promise((resolve,reject)=>query_prd(resolve,reject,req,conexion))
 }
 
-// let bprd_id = (req,res,next) => {
-//     console.log("param",req.params);
-//     console.log("query",req.query);
-    
-//     /////////NUEVO METODO FUNCIONAL
-//     if(!objevacio(req.params)){
-//         let parametros=objepropiedades(req.params);////VALIDO HASTA AQUI
-//         let validados=objeto_verificador_mejorado(req.params,parametros,1,"id");
-//         if(validados==="valido"){
-//             /////validar la longuitud tambien del parametro pasado
-//             if(req.params["id"].length===11){
-//                 bd_conexion(res,req.params.id);
-//             }
-//             else{
-//                 res.status(400).send("parametro invalido");
-//             }
-//         }
-//         else{
-//             res.status(400).send("parametro invalido");
-//         }
-//     }
-//     else{
-//         res.status(400).send("parametro invalido");
-//     }
-// }
-
-
 let query_prd = (resolve,reject,req,conexion)=>{
-    let cli='C00904';
+
+    let cli=req.query.codcli;
     let id=req.params.id;
-    let letra='F';    
-    // let sp_sql="select a.codi,a.codf,a.descr,a.marc,(CAST(a.stoc as int)-(CAST(a.svta as int)+CAST(a.pedi as int))),a.Usr_001,a.codmar,a.Usr_016,a.vvus,b.dscto_default,b.dscto_maxven from prd0101 a inner join dtl_dscto_marca_tc b on (b.codmar=a.codmar AND b.codtcl=@letra) where a.codi=@ide";
+    let letra=req.query.tipcli;
     // let sp_sql="select a.codi,a.codf,a.descr,a.marc,(CAST(a.stoc as int)-(CAST(a.svta as int)+CAST(a.pedi as int))),a.Usr_001,a.codmar,a.Usr_016,a.vvus,('min:'+CAST(b.dscto_default as varchar)+' '+'max:'+CAST(b.dscto_maxven as varchar)) from prd0101 a inner join dtl_dscto_marca_tc b on (b.codmar=a.codmar AND b.codtcl=@letra) where a.codi=@ide";
     // let sp_sql="select a.codi,a.codf,a.descr,a.marc,(CAST(a.stoc as int)-(CAST(a.svta as int)+CAST(a.pedi as int))),a.Usr_001,a.codmar,a.Usr_016,(CASE WHEN ISNULL(c.codi,'LIBRE')='LIBRE' THEN 'LIBERADO' WHEN ISNULL(c.codi,'LIBRE')<>'LIBRE' THEN 'RESTRINGUIDO' END),a.vvus,('min:'+CAST(b.dscto_default as varchar)+'%'+' '+'max:'+CAST(b.dscto_maxven as varchar)+'%') from prd0101 a inner join dtl_dscto_marca_tc b on (b.codmar=a.codmar AND b.codtcl=@letra) left join ListaHp3 c on (c.codi=a.codi) where a.codi=@ide";
     let sp_sql="select a.codi,a.codf,a.descr,a.marc,(CAST(a.stoc as int)-(CAST(a.svta as int)+CAST(a.pedi as int))),a.Usr_001,a.codmar,a.Usr_016,dbo.producto_hp_api(a.codi,@cliente),a.vvus,('min:'+CAST(b.dscto_default as varchar)+'%'+' '+'max:'+CAST(b.dscto_maxven as varchar)+'%'),dbo.promocion_producto_api(a.codi) from prd0101 a inner join dtl_dscto_marca_tc b on (b.codmar=a.codmar AND b.codtcl=@letra) where a.codi=@ide";
@@ -84,7 +57,6 @@ let query_prd = (resolve,reject,req,conexion)=>{
             }
             else{
                 let respuesta=[];
-                // let respuesta2={};
                 let contador=0;
                 rows.forEach(fila=>{
                     let tmp={};
@@ -95,8 +67,6 @@ let query_prd = (resolve,reject,req,conexion)=>{
                     })
                     respuesta.push(tmp);
                 });
-                // Object.assign(respuesta2,respuesta);
-                // res.status(200).json(respuesta2);
                 resolve(respuesta);
             }
         }

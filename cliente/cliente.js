@@ -41,7 +41,4 @@ router.get('/ruc/:id',objgeneralesllenos[0],objkeyvalidos[0],ruc_largo,(req,res)
 router.get('/ruc/:id',(req,res,next)=>{res.status(400).send("parametro invalido")})
 
 
-// router.get('/dsct',prdcodi)
-
-
 module.exports=router

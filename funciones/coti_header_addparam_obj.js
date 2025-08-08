@@ -67,4 +67,19 @@ function coti_objheader_structure(paramsheader,ndocu,hoy){
     return ordenado;
 }
 
-module.exports={coti_objheader_structure}
+function coti_objheader_addparametros(paramsheader){
+    let construido_esquema={};
+    let enviados=Object.keys(paramsheader);
+    for(const parametro of enviados){
+        ////podria haber cambios
+        if(typeof paramsheader[parametro]==='string'){
+            construido_esquema[parametro]=[TYPES.Char,paramsheader[parametro]];
+        }
+        else if(typeof paramsheader[parametro]==='number'){
+            construido_esquema[parametro]=[TYPES.Float,paramsheader[parametro]];
+        }
+    }
+    return construido_esquema;
+}
+
+module.exports={coti_objheader_structure,coti_objheader_addparametros}

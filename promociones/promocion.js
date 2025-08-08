@@ -6,8 +6,7 @@ const jwt = require('jsonwebtoken')
 
 //////ESPACIO PARA FUNCIONES DE COMPROBACION PARA LOS QUERYS
 let {prom_search} = require('../querys/promociones/prom_buscador');
-//////ESPACIO PARA MIDDLEWARE DE OBJETOS PARA PARAMETROS QUE TIENEN TIENE LOS INPUTS CORRECTOS
-// const {ruc_largo} = require('../middleware/ruc_diferenciador');
+// let {} = require('../querys')
 //////ESPACIO PARA MIDDLEWARE DE OBJETOS VACIOS PARA PARAMETROS Y QUERY
 const {middleware_objevacio_param} = require('../middleware/params_vacios');
 const {middleware_objevacio_qs} = require('../middleware/qs_vacios');
@@ -22,9 +21,9 @@ router.use(express.json(),express.urlencoded({extended:true}));
 
 router.get('/',(req,res,next)=>{res.status(200).send("ruta promocion")})
 
-router.get('/producto',(req,res,next)=>{
-    res.status(200).json({"msg":"verificar que promo es llamado segun producto"})
-})
+// router.get('/producto',(req,res,next)=>{
+//     res.status(200).json({"msg":"verificar que promo es llamado segun producto"})
+// })
 
 router.get('/token',(req,res)=>{
     let authorization= req.headers.authorization;
@@ -41,6 +40,8 @@ router.get('/token',(req,res)=>{
         return res.status(401).json({"msg":"Unauthorized: invalid token"})
     }
 })
+
+router.get('/:codi',prom_search)
 
 
 module.exports=router

@@ -1,6 +1,6 @@
 
 const {Connection,Request,TYPES} = require('../../conexion/cadena')
-const {coti_objheader_structure} = require('../../funciones/coti_header_addparam_obj');
+const {coti_objheader_structure,coti_objheader_addparametros} = require('../../funciones/coti_header_addparam_obj');
 
 function query_llamada(resolve,reject,req,res,conexion,correlativo,fecha){
     
@@ -28,4 +28,29 @@ function query_llamada(resolve,reject,req,res,conexion,correlativo,fecha){
     conexion.callProcedure(consulta);
 }
 
-module.exports={query_llamada}
+function query_llamada2(resolve,reject,req,conexion){
+    console.log("revisar estos parametros de la cabecera",req.cabecera);
+    let valores_parseados=coti_objheader_addparametros(req.cabecera);
+    let sp_sql="GrabaMstCotFac";
+    let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
+        if(err){
+            /////validar la respuesta en de error de servidor
+            conexion.close();
+            console.log(err);
+            // res.status(500).send("error interno");///envia doble cabecera
+            reject("sin exito de consulta en cabesera");
+        }
+        else{
+            conexion.close();
+            console.log("exito la creada de la cabecera")
+            resolve(req.cabecera);
+        }
+    })
+    
+    for(const input in valores_parseados){
+        consulta.addParameter(input,valores_parseados[input][0],valores_parseados[input][1]);
+    }
+    conexion.callProcedure(consulta);
+}
+
+module.exports={query_llamada,query_llamada2}

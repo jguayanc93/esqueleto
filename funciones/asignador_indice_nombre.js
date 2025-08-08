@@ -51,11 +51,24 @@ let asignador_identificadores = (respuesta,indices,profundidad,cabecera_comodin=
                     
                     let objeto_momentaneo={}
                     objeto_momentaneo["cantidad"]=prom_cantidad.length;
+                    // let objeto_momentaneo= new Map();
+                    // objeto_momentaneo.set("cantidad",prom_cantidad.length)
 
+                    let indicador_cantidad_promocion=1;
                     for(const descripcion of prom_cantidad){
                         let identificador=descripcion.split(":");
-                        objeto_momentaneo[identificador[0]]=identificador[1];
+                        // objeto_momentaneo[identificador[0]]=identificador[1];
+                        objeto_momentaneo[`Promocion ${indicador_cantidad_promocion}`]={};
+                        objeto_momentaneo[`Promocion ${indicador_cantidad_promocion}`]["idprom"]=identificador[0];
+                        objeto_momentaneo[`Promocion ${indicador_cantidad_promocion}`]["desprom"]=identificador[1];
+                        indicador_cantidad_promocion++;
                     }
+                    ///////NUEVO FORMA
+                    // for(const descripcion of prom_cantidad){
+                    //     let identificador=descripcion.split(":");
+                    //     objeto_momentaneo.set(identificador[0],{"idprom":identificador[0],"desprom":identificador[1]});
+                    // }
+                    // console.log("este mi MAP",objeto_momentaneo);
                     mejorado[indices[numero_indice]]=objeto_momentaneo;
                 }                
             }

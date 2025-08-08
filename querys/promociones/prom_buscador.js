@@ -1,33 +1,49 @@
 require('dotenv').config();
-const {config,Connection,Request,TYPES} = require('../../conexion/cadena')
 
-let prom_search = (req,res,next) => {
-    console.log("param",req.params);
-    console.log("query",req.query);
+const {Request,TYPES} = require('../../conexion/cadena')
+const {conn} = require('../../conexion/cnn')
+
+const {prom_info} = require('../../id_nombres/lista')
+const asignador_identificadores= require('../../funciones/asignador_indice_nombre')
+
+
+async function prom_search(req,res,next) {
+    try{
+        const primera_llamada= await obtenerpromesa_conexion();
+        const paso1= await obtenerpromesa_consulta1(req,primera_llamada);
+        const paso2= asignador_identificadores(paso1,prom_info,1)
+        res.status(200).json(paso2);
+    }
+    catch(err){
+        console.log(err);
+        res.status(400).json({
+            "status":"ERROR",
+            "codigo":2,
+            "msg":err
+        })
+    }
+}
+
+function obtenerpromesa_conexion(){ return new Promise((resolve,reject)=>conn(resolve,reject)) }
+
+function obtenerpromesa_consulta1(req,conexion){return new Promise((resolve,reject)=>query_promo_info(resolve,reject,req,conexion))}
+
+// let prom_search = (req,res,next) => {
+//     console.log("param",req.params);
+//     console.log("query",req.query);
     
-    let codi=req.params.id;
-    let cliente=req.query.cliente;
+//     let codi=req.params.id;
+//     let cliente=req.query.cliente;
 
-    bd_conexion(res,codi,cliente);
-}
+//     bd_conexion(res,codi,cliente);
+// }
 
+let query_promo_info = (res,conexion)=>{
 
-let bd_conexion=(res,codi,cliente)=>{
-    conexion = new Connection(config);
-    conexion.connect();
-    conexion.on('connect',(err)=>{
-        if(err){
-            console.log("ERROR: ",err);
-        }
-        else{
-            bd_c_query(res,codi,cliente);
-        }
-    });
-}
+    let codi=req.params.codi;
+    let idprom=req.query.idprom;
 
-let bd_c_query = (res,codi,cliente)=>{
-    // let sp_sql="select codcli,ruccli,nomcli,ISNULL((CASE WHEN codcat='08' THEN 'SUMINISTROS HABILITADO' WHEN codcat<>'08' THEN 'NO HABILITADO' END),'NO HABILITADO'),ISNULL((CASE Usr_001 WHEN '1' THEN 'PLOTTER HABILITADO' END),'NO HABILITADO') from mst01cli where codcli=@cli";
-    let sp_sql="";
+    let sp_sql="select idprom,codi,monto,dbo.promocion_info_api(codi,idprom),(CASE dbo.promocion_info_api(codi,idprom) WHEN 'DESCUENTO' THEN dsct WHEN 'REGALO' THEN boncodf END) from dtl_promocion_progra where idprom=@id AND codi=@codi";
         
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){
@@ -43,7 +59,7 @@ let bd_c_query = (res,codi,cliente)=>{
             }
             else{
                 let respuesta=[];
-                let respuesta2={};
+                // let respuesta2={};
                 let contador=0;
                 rows.forEach(fila=>{
                     let tmp={};
@@ -54,13 +70,13 @@ let bd_c_query = (res,codi,cliente)=>{
                     })
                     respuesta.push(tmp);
                 });
-                Object.assign(respuesta2,respuesta);
-                res.status(200).json(respuesta2);
+                // Object.assign(respuesta2,respuesta);
+                // res.status(200).json(respuesta2);
             }
         }
     })
-    consulta.addParameter('ide',TYPES.VarChar,codi);
-    consulta.addParameter('cli',TYPES.VarChar,cliente);
+    consulta.addParameter('id',TYPES.VarChar,idprom);
+    consulta.addParameter('codi',TYPES.VarChar,codi);
     conexion.execSql(consulta);
 }
 

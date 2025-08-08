@@ -10,4 +10,6 @@ const producto=["codi","codf","descr","marc","stoc","partnumb","codmar","etiquet
 
 const prdcodi=["codi","codf","descr","marc","stoc","partnumb","codmar","etiqueta","restriccion","precio","descuento","promocion"];
 
-module.exports={cliente_ruc,cliente,familias,subfamilias,producto,prdcodi}
+const prom_info=[""];
+
+module.exports={cliente_ruc,cliente,familias,subfamilias,producto,prdcodi,prom_info}

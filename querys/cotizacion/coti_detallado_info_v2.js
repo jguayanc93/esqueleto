@@ -23,6 +23,7 @@ function query_info_productos(resolve,reject,req,conexion,indice){
                 if(rows.length==0){
                     // cuidado poruqe puede no ser un codigo valido el que se este pasando
                     // query_info_productos(resolve,reject,req,conexion,indice+1);
+                    query_info_productos(resolve,reject,req,conexion,indice+1);
                 }
                 else{
                     let respuesta=[];

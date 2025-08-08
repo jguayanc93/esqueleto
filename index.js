@@ -55,13 +55,13 @@ app.get(process.env.BASE_URI+'/access',(req,res)=>{
 
 app.use(process.env.BASE_URI+'/producto',ruta.producto)////CORREGIR
 
-app.use(process.env.BASE_URI+'/cliente',ruta.cliente)///CASI CORRIGIDO
+app.use(process.env.BASE_URI+'/cliente',ruta.cliente)///TERMINADO
 
 app.use(process.env.BASE_URI+'/tcambio',ruta.tipo_cambio)////CORREGIR
 
 app.use(process.env.BASE_URI+'/promocion',ruta.promos)///CORREGIR
 
-app.use(process.env.BASE_URI+'/cotizacion',ruta.cotizacion)///CORREGIR
+app.use(process.env.BASE_URI+'/cotizacion',ruta.cotizacion)///CASI TERMINADO
 
 // app.use(process.env.BASE_URI+'/marca',)////dentro de producto
 

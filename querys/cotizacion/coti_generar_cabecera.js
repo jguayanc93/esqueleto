@@ -29,7 +29,7 @@ function query_llamada(resolve,reject,req,res,conexion,correlativo,fecha){
 }
 
 function query_llamada2(resolve,reject,req,conexion){
-    console.log("revisar estos parametros de la cabecera",req.cabecera);
+    // console.log("revisar estos parametros de la cabecera",req.cabecera);
     let valores_parseados=coti_objheader_addparametros(req.cabecera);
     let sp_sql="GrabaMstCotFac";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{

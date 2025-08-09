@@ -39,7 +39,7 @@ let bd_c_query = (res)=>{
             }
             else{
                 let respuesta=[];
-                let respuesta2={};
+                // let respuesta2={};
                 let contador=0;
                 rows.forEach(fila=>{
                     let tmp={};
@@ -50,8 +50,9 @@ let bd_c_query = (res)=>{
                     })
                     respuesta.push(tmp);
                 });
-                Object.assign(respuesta2,respuesta);
-                res.status(200).json(respuesta2[0]);
+                // Object.assign(respuesta2,respuesta);
+                // res.status(200).json(respuesta2[0]);
+                res.status(200).json({"tcam":respuesta[0][0]});
             }
         }
     })

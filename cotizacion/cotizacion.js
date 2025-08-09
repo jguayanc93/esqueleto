@@ -5,7 +5,8 @@ const router = express.Router();
 
 //////ESPACIO PARA FUNCIONES DE COMPROBACION PARA LOS QUERYS
 // let {coti_crear,cotizacion_crear_llamar} = require('../querys/cotizacion/coti_crear');
-let {llamar_crear,cotizacion_crear_llamar} = require('../querys/cotizacion/coti_crear');
+let {llamar_crear} = require('../querys/cotizacion/coti_crear');
+let {llamar_crear_promocion} = require('../querys/cotizacion/coti_crear_con_promocion')
 //////ESPACIO PARA MIDDLEWARE DE OBJETOS PARA PARAMETROS QUE TIENEN TIENE LOS INPUTS CORRECTOS
 const {validar_cabesera} = require('../middleware/coti_validar_cabesa');
 const {validar_body} = require('../middleware/coti_validar_body');
@@ -29,6 +30,11 @@ router.use(express.urlencoded({extended:true}));
 
 // router.post('/crear',validar_cabesera,validar_body,cotizacion_crear_llamar)////RUTA VERSION 1
 
+router.post('/crear',(req,res,next)=>{
+    let promociones=Object.hasOwn(req.body.coti,"promociones");
+    if(promociones){ next(); }
+    else{ next('route') }
+},llamar_crear_promocion)
 router.post('/crear',llamar_crear)
 
 // router.post('/crear',(req,res,next)=>{

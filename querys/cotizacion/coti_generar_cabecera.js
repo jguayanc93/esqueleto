@@ -42,7 +42,6 @@ function query_llamada2(resolve,reject,req,conexion){
         }
         else{
             conexion.close();
-            console.log("exito la creada de la cabecera")
             resolve(req.cabecera);
         }
     })

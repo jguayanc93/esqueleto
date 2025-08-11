@@ -20,6 +20,7 @@ const {promocion_informacion_bucle} = require('../../querys/cotizacion/coti_sabe
 const {promocion_informacion_regalo} = require('../../querys/cotizacion/coti_info_bonificacion_v2')
 const {promocion_eliminados} = require('../../querys/cotizacion/coti_promos_rechazadas')
 const {query_recalculo_totalisados} = require('../../querys/cotizacion/coti_recalculo_promocion')
+const {recorrer_promdetallado} = require('../../querys/cotizacion/coti_generar_promdetallado')
 
 /* podria usar estos valores ya estan definidos y son todos los necesarios */
 // const cabesera_keys=["fecha","cdocu","ndocu","codcli","nomcli","ruccli","atte","nrefe","requ","mone","tcam","tota","toti","totn","flag","codven","codcdv","cond","fven","dura","cOperacion","obser","estado","obsere","word","obser2","dirent","codscc"];
@@ -49,12 +50,15 @@ async function llamar_crear_promocion(req,res,next) {
         const paso12= await consulta13(req)//////eliminar los que no llegaron a la cantidad
         const paso13= await consulta14(req)
 
-        const octava_llamada= await obtenerpromesa_conexion();///cabecera MAL
+        const octava_llamada= await obtenerpromesa_conexion();///cabecera SUPUESTO CORRECTO
         const paso14= await consulta8(req,octava_llamada);
-        const novena_llamada= await obtenerpromesa_conexion();////detallado MAL
+        const novena_llamada= await obtenerpromesa_conexion();////detallado FALTA LA OTRA PARTE
         const paso15= await consulta9(req,novena_llamada);
+        ////agregar las promos al detallado
+        const decima_llamada= await obtenerpromesa_conexion();
+        const paso16= await consulta15(req,decima_llamada);
         ////COMIENSO CON LA CREACION
-        // res.status(200).json(paso15);
+        // res.status(200).json(paso16);
         res.status(200).json({
             "msg":`cotizacion creada con exito: ${paso7}`
         });
@@ -94,6 +98,8 @@ function consulta12(req,conexion){ return new Promise((resolve,reject)=>promocio
 function consulta13(req){ return new Promise((resolve,reject)=>promocion_eliminados(resolve,reject,req))}
 
 function consulta14(req){ return new Promise((resolve,reject)=>query_recalculo_totalisados(resolve,reject,req))}
+
+function consulta15(req,conexion){ return new Promise((resolve,reject)=>recorrer_promdetallado(resolve,reject,req,conexion))}
 
 // function obtenerpromesa_consulta1(conexion){
 //     return new Promise((resolve,reject)=>query_numero_documento(resolve,reject,conexion))

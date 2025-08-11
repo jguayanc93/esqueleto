@@ -89,4 +89,33 @@ function coti_objbody_addparametros(paramsproductos){
     return construido_esquema;
 }
 
-module.exports={coti_objbody_structure,coti_objbody_addparametros}
+function coti_objpromo_addparametros(paramsproductos,item_num){
+    let contador=0;
+    let numero_item=item_num;
+    let construido_esquema={};
+    let enviados=Object.keys(paramsproductos);
+
+    for(const index of enviados) construido_esquema[index]={};
+    ///////////////////////////////
+    for(const indice of enviados){
+        for(const parametro of Object.values(paramsproductos[indice])){
+            
+            if(typeof parametro==='string'){
+                if(cuerpo_keys[contador]==='item'){
+                    construido_esquema[indice][cuerpo_keys[contador]]=[TYPES.Float,numero_item];
+                    numero_item++;
+                }
+                else{ construido_esquema[indice][cuerpo_keys[contador]]=[TYPES.Char,paramsproductos[indice][contador]]; }
+            }
+            else if(typeof parametro==='number'){
+                construido_esquema[indice][cuerpo_keys[contador]]=[TYPES.Float,paramsproductos[indice][contador]];
+            }
+            contador++;
+        }
+        contador=0;
+    }
+    
+    return construido_esquema;
+}
+
+module.exports={coti_objbody_structure,coti_objbody_addparametros,coti_objpromo_addparametros}

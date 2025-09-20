@@ -43,7 +43,8 @@ let query_promo_info = (resolve,reject,req,conexion)=>{
     let codi=req.params.codi;
     let idprom=req.query.idprom;
 
-    let sp_sql="select idprom,codi,monto,dbo.promocion_info_api(codi,idprom),(CASE dbo.promocion_info_api(codi,idprom) WHEN 'DESCUENTO' THEN CAST(dsct as varchar) WHEN 'REGALO' THEN boncodf END) from dtl_promocion_progra where idprom=@id AND codi=@codi";
+    // let sp_sql="select idprom,codi,monto,dbo.promocion_info_api(codi,idprom),(CASE dbo.promocion_info_api(codi,idprom) WHEN 'DESCUENTO' THEN CAST(dsct as varchar) WHEN 'REGALO' THEN boncodf END) from dtl_promocion_progra where idprom=@id AND codi=@codi";
+    let sp_sql="select idprom,codi,monto,dbo.promocion_info_api(codi,idprom,1),dbo.promocion_info_api(codi,idprom,2) from dtl_promocion_progra where idprom=@id AND codi=@codi";
         
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){
@@ -113,7 +114,7 @@ let query_promo_regalo = (resolve,reject,objformato,conexion)=>{
                     })
                     respuesta.push(tmp);
                 });
-                console.log(respuesta);
+                // console.log(respuesta);
                 objformato.msg.otorgar={"codi":respuesta[0][0],"producto":respuesta[0][1]}
                 resolve(objformato);
             }

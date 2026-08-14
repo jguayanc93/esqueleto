@@ -81,6 +81,9 @@ function coti_objbody_addparametros(paramsproductos){
             else if(typeof parametro==='number'){
                 construido_esquema[indice][cuerpo_keys[contador]]=[TYPES.Float,paramsproductos[indice][contador]];
             }
+            else if(typeof parametro==='object'){
+                construido_esquema[indice][cuerpo_keys[contador]]=[TYPES.DateTime,paramsproductos[indice][contador]];
+            }
             contador++;
         }
         contador=0;
@@ -109,6 +112,9 @@ function coti_objpromo_addparametros(paramsproductos,item_num){
             }
             else if(typeof parametro==='number'){
                 construido_esquema[indice][cuerpo_keys[contador]]=[TYPES.Float,paramsproductos[indice][contador]];
+            }
+            else if(typeof parametro==='object'){
+                construido_esquema[indice][cuerpo_keys[contador]]=[TYPES.DateTime,paramsproductos[indice][contador]];
             }
             contador++;
         }

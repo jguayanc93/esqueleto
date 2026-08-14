@@ -46,8 +46,7 @@ async function llamar_crear_promocion(req,res,next) {
         const paso10= await consulta11(req,sexta_llamada)///buscar la comparacion de la promo
         const setima_llamada= await obtenerpromesa_conexion();
         const paso11=await consulta12(req,setima_llamada)////corregir las bonificaciones
-        // console.log("revisar lo que esta enviando",paso11)
-        const paso12= await consulta13(req)//////eliminar los que no llegaron a la cantidad
+        const paso12= await consulta13(req)//////eliminar los que no llegaron a la cantidad        
         const paso13= await consulta14(req)
 
         const octava_llamada= await obtenerpromesa_conexion();///cabecera SUPUESTO CORRECTO

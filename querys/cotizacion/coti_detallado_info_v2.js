@@ -12,7 +12,8 @@ function query_info_productos(resolve,reject,req,conexion,indice){
         resolve(req.productos);
     }
     else{
-        let sp_sql="select CONVERT(char,GETDATE(),105),'31','documento','cliente','cambio','moneda','monedaitm',aigv,'numero',codi,codf,marc,umed,descr,'cantidad',vvus,'tota','descuento','totn','','01',pcus,'S' from prd0101 where codi=@codi";
+        // let sp_sql="select CONVERT(char,GETDATE(),105),'31','documento','cliente','cambio','moneda','monedaitm',aigv,'numero',codi,codf,marc,umed,descr,'cantidad',vvus,'tota','descuento','totn','','01',pcus,'S' from prd0101 where codi=@codi";
+        let sp_sql="select CONVERT(date,GETDATE()),'31','documento','cliente','cambio','moneda','monedaitm',aigv,'numero',codi,codf,marc,umed,descr,'cantidad',vvus,'tota','descuento','totn','','01',pcus,'S' from prd0101 where codi=@codi";
         let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
             if(err){
                 conexion.close();

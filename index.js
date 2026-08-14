@@ -5,7 +5,7 @@ const cors = require('cors')
 const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
 
-const corhabilitaciones=require('./cors/conf')
+// const corhabilitaciones=require('./cors/conf')
 
 const app = express();
 const port = process.env.PORT || 3002;
@@ -15,7 +15,8 @@ const ruta = require('./rutas/rutas')
 //app.set('trust proxy','127.0.0.1');/////PROXY PASAR DE CABESERA
 
 ///////CREAR LA LISTA BLANCA Y EL OBJETO DE CONFIGURACION
-app.use(cors(corhabilitaciones))
+// app.use(cors(corhabilitaciones))
+app.use(cors())
 
 // app.use([express.json(),cookieParser(process.env.SECRET_PASS)])
 app.use(express.json())
@@ -53,19 +54,18 @@ app.get(process.env.BASE_URI+'/access',(req,res)=>{
     })
 })
 
+////ruta para votar la salida del toquen por mientras
+app.use('/v1/token',ruta.autenticacion)///momentaneo para generar el token
+
 // app.use(process.env.BASE_URI+'/producto',ruta.producto)////CORREGIR
 app.use('/v1/producto',ruta.producto)////CORREGIR
 
-// app.use(process.env.BASE_URI+'/cliente',ruta.cliente)///TERMINADO
 app.use('/v1/cliente',ruta.cliente)///TERMINADO
 
-// app.use(process.env.BASE_URI+'/tcambio',ruta.tipo_cambio)////TERMINADO
-app.use('/v1/tcambio',ruta.tipo_cambio)////TERMINADO
+// app.use('/v1/tcambio',ruta.tipo_cambio)////TERMINADO
 
-// app.use(process.env.BASE_URI+'/promocion',ruta.promos)///TERMINADO
-app.use('/v1/promocion',ruta.promos)///TERMINADO
+// app.use('/v1/promocion',ruta.promos)///TERMINADO
 
-// app.use(process.env.BASE_URI+'/cotizacion',ruta.cotizacion)///CASI TERMINADO
 app.use('/v1/cotizacion',ruta.cotizacion)///CASI TERMINADO
 
 // app.use(process.env.BASE_URI+'/marca',)////dentro de producto

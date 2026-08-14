@@ -23,6 +23,8 @@ function query_recalculo_totalisados(resolve,reject,req){
 
         let tota_header=0;
         let totn_header=0;
+        /////////aca esta el error de totalisados con promosciones
+        ///////no existe el valor de totalisado de la promocion a adjuntar
         for(const item of Object.keys(req.promos_validos)){            
             // console.log("valor de tota",typeof req.promos_validos[item][16],req.promos_validos[item][16])
             tota_header+=parseFloat(req.promos_validos[item][16]);

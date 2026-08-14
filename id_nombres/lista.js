@@ -8,7 +8,7 @@ const subfamilias=["codsub","nomsub"];
 
 const producto=["codi","codf","descr","marc","stoc","partnumb","codmar","etiqueta","restriccion"];
 
-const prdcodi=["codi","codf","descr","marc","stoc","partnumb","codmar","etiqueta","restriccion","precio","descuento","promocion"];
+const prdcodi=["codi","codf","descr","marc","stoc","partnumb","codmar","etiqueta","restriccion","precio","descuento","descuento maximo","promocion"];
 
 const prom_info=["idprom","codi","cantidad","tipo","otorgar"];
 

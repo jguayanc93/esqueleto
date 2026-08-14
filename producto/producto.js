@@ -3,6 +3,11 @@ require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 // const jws=require('jws')
+///////NUEVO ESPACIO PARA LAS VERDADERAS FUNCIONES
+let {sincronizar_nuevos_productos} = require('../querys/producto/p_listado_permitido')
+let {actualisar_nuevos_productos} = require('../querys/producto/p_listado_actualisar')
+let {listado_impacto_productos} = require('../querys/producto/p_listado_listar')
+let {coordinar_stock_productos} = require('../querys/producto/p_listado_stock')
 
 //////ESPACIO PARA FUNCIONES DE COMPROBACION PARA LOS QUERYS
 let {bprd_fam} = require('../querys/producto/p_buscar_familia');
@@ -32,6 +37,11 @@ router.use(express.json(),express.urlencoded({extended:true}));
 
 ///piensa en una manera de pedir el producto por varias entradas y con diferentes condiciones
 router.get('/',(req,res)=>{ res.status(200).send("ruta productos"); })
+router.post('/sincronizar',sincronizar_nuevos_productos)
+router.put('/actualisar',actualisar_nuevos_productos)
+router.get('/listado',listado_impacto_productos)
+router.put('/stock',coordinar_stock_productos)///podria convertilo a get
+//////////////SEPARAR LAS PROPIEDADES DE ABAJO
 
 router.get('/categorias',bprd_fam)////producto rango de familia
 // router.get('/categorias/:catID',bprd_fam)////POSIBLE REDUNDANCIA

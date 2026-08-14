@@ -19,6 +19,7 @@
     "jsonwebtoken": "^9.0.2",
     "jws": "^4.0.0",
     "morgan": "^1.10.0",
+    "node-cron": "^4.6.0",
     "tedious": "^18.6.1"
   }
 }
